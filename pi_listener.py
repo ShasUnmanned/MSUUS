@@ -12,6 +12,9 @@ def hello_world():
 def run_command():
 	request_data = request.get_json()
 	subprocess.call([request_data['command'], request_data['options']])
+	return Flask.jsonify( {
+		"status": "ok",
+		})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
