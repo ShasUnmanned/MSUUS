@@ -7,12 +7,11 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello World!'
 
-# run a command passed by POST method as a shell command on the pi
-# example would  be like http://serverurl:5000/run_command?command=something&options=somethingelse
-# might not work and might need to be passed as a json object
-@app.route('/run_command', methods=['POST'])
+# run a command (contained in a json object) passed by POST method as a shell command on the pi
+@app.route('/run_command', methods=['GET', 'POST'])
 def run_command():
-    subprocess.call([request.args.get('command', ''), request.args.get('options','')])
+	request_data = request.get_json()
+	subprocess.call([request_data['command'], request_data['options']])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
