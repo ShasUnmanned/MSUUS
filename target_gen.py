@@ -25,15 +25,24 @@ def replace_color(image_path, color):
 	
 	return img
 
-def generate_image_with_kv(key):	
+def generate_image(requested_letter = none, requested_shape = none, requested_letter_color = none, requested_shape_color = none):	
 	letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 	shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Rectangle', 'Trapezoid', 'Pentagon', 'Hexagon',
 'Heptagon', 'Octagon', 'Star', 'Cross']
 	color_list = ['White', 'Black', 'Gray', 'Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Brown', 'Orange']
+	
+	if (requested_letter == none):
+		letter = letter_list[random.randrange(0,26)]
+	else:
+		letter = requested_letter
 
-	letter = letter_list[random.randrange(0,26)]
-	shape_index = random.randrange(0,13)
-	shape = shape_list[shape_index]
+	if (requested_shape == none):
+		shape_index = random.randrange(0,13)
+		shape = shape_list[shape_index]
+	else:
+		shape = requested_shape
+
+
 	letter_color_temp = random.randrange(0,10)
 	letter_color = color_list[letter_color_temp]
 	shape_color_temp = random.randrange(0,10)

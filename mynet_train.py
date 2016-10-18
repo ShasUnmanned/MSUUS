@@ -14,7 +14,7 @@ import mynet
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_string('train_dir', '/home/salvi/Learning/mynet_train', """DIR to write logs and checkpoint.""")
+tf.app.flags.DEFINE_string('train_dir', '../mynet_train', """DIR to write logs and checkpoint.""")
 tf.app.flags.DEFINE_integer('max_steps', 10000, """Number of batches to run""")
 tf.app.flags.DEFINE_boolean('log_device_placement', False, """aaa""")
 
