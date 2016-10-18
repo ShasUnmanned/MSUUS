@@ -16,5 +16,12 @@ def run_command():
 		"status": "ok",
 		})
 
+@app.route('/get_gps', methods=['GET', 'POST'])
+def get_gps():
+	return Flask.jsonify( {
+		"latitude": latitude,
+		"longitude": longitude,
+		})
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
