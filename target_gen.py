@@ -25,18 +25,18 @@ def replace_color(image_path, color):
 	
 	return img
 
-def generate_image(requested_letter = none, requested_shape = none, requested_letter_color = none, requested_shape_color = none):	
+def generate_image(requested_letter = None, requested_shape = None, requested_letter_color = None, requested_shape_color = None):	
 	letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 	shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Rectangle', 'Trapezoid', 'Pentagon', 'Hexagon',
 'Heptagon', 'Octagon', 'Star', 'Cross']
 	color_list = ['White', 'Black', 'Gray', 'Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Brown', 'Orange']
 	
-	if (requested_letter == none):
+	if (requested_letter == None):
 		letter = letter_list[random.randrange(0,26)]
 	else:
 		letter = requested_letter
 
-	if (requested_shape == none):
+	if (requested_shape == None):
 		shape_index = random.randrange(0,13)
 		shape = shape_list[shape_index]
 	else:
@@ -67,12 +67,7 @@ def generate_image(requested_letter = none, requested_shape = none, requested_le
 	composite.save('composites/'+composite_path)
 	image = composite.convert("RGBA").tobytes("raw", "RGBA")
 	
-	if (key == 'letter'):
-		return target(composite_path, letter, letter_color, shape, shape_color, image, letter)
-	elif (key == 'shape'):
-		return target(composite_path, letter, letter_color, shape, shape_color, image, shape_index)
-	else:
-		return target(composite_path, letter, letter_color, shape, shape_color, image, letter)
+	return target(composite_path, letter, letter_color, shape, shape_color, image, letter)
 
 
 
