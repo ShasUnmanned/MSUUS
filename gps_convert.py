@@ -1,11 +1,17 @@
 import sys
-from LatLon import *
+import re
+
+def to_decimal(in_str):
+	(d,m,s,h) = re.split('\s',in_str, maxsplit=4)
+	if (re.search('[swSW]', in_str)):
+		sign = -1
+	else:
+		sign = 1
+	return sign * (int(d) + float(m) / 60 + float(s) / 3600)
 
 def main(argv):
-	print(argv)
-	print(argv[0])
-	output_str = string2latlon(argv[0], argv[1], 'd% %m% %S% H')
-	print(output_str.to_string('d%_%M'))
+	output_str = str(to_decimal(argv[0])) + ' ' + str(to_decimal(argv[1]))
+	print(output_str)
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
