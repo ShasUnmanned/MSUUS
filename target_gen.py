@@ -47,6 +47,7 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 		letter_color = color_list[letter_color_temp]
 	else:
 		letter_color = requested_letter_color
+		letter_color_temp = color_list.index(letter_color)
 	
 	if (requested_shape_color == None):
 		shape_color_temp = random.randrange(0,10)
