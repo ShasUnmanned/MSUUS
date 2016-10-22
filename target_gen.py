@@ -41,15 +41,21 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 		shape = shape_list[shape_index]
 	else:
 		shape = requested_shape
-
-
-	letter_color_temp = random.randrange(0,10)
-	letter_color = color_list[letter_color_temp]
-	shape_color_temp = random.randrange(0,10)
-	while (shape_color_temp == letter_color_temp):
-		shape_color_temp = random.randrange(0,10)
-	shape_color = color_list[shape_color_temp]
 	
+	if (requested_letter_color == None):
+		letter_color_temp = random.randrange(0,10)
+		letter_color = color_list[letter_color_temp]
+	else:
+		letter_color = requested_letter_color
+	
+	if (requested_shape_color == None):
+		shape_color_temp = random.randrange(0,10)
+		while (shape_color_temp == letter_color_temp):
+			shape_color_temp = random.randrange(0,10)
+		shape_color = color_list[shape_color_temp]
+	else:
+		shape_color = requested_shape_color
+
 	background_path = 'Grass.png'
 	letter_path = letter + '.png'
 	shape_path = 'shapes/' + shape + '.png'
