@@ -73,8 +73,12 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	composite = composite.resize((64,64), Image.ANTIALIAS)
 	composite.save('composites/'+composite_path)
 	image = composite.convert("RGBA").tobytes("raw", "RGBA")
-
-	label = requested_label
+	
+	if (requested_label == 'shape'):
+		label = shape_list.index(shape)
+	elif (requested_label == 'letter'):
+		label = letter_list.index(letter)
+	
 	
 	return target(composite_path, letter, letter_color, shape, shape_color, image, label)
 

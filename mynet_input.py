@@ -31,7 +31,11 @@ def get_mynet_input(key):
 	result.depth = 4
 	record_bytes = result.width * result.height * result.depth
 	reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
-	target = target_gen.generate_image(requested_shape="Star",requested_label="Star")
+	print(key)
+	if (key[0] == 'shape'):
+		target = target_gen.generate_image(requested_shape=key[1],requested_label=key[0])
+	elif (key[0] == 'letter'):
+		target = target_gen.generate_image(requested_letter=key[1],requested_label=key[0])
 	result.label = target.label
 
 	record_bytes = tf.decode_raw(target.image, tf.uint8)
@@ -42,8 +46,7 @@ def get_mynet_input(key):
 	return result
 
 
-def _generate_image_and_label_batch(image, label, min_queue_examples,
-																		batch_size, shuffle):
+def _generate_image_and_label_batch(image, label, min_queue_examples, batch_size, shuffle):
 	num_preprocess_threads = 16
 	if shuffle:
 		images, label_batch = tf.train.shuffle_batch(
@@ -67,7 +70,7 @@ def _generate_image_and_label_batch(image, label, min_queue_examples,
 
 def distorted_inputs(data_dir, batch_size):
 
-	read_input = get_mynet_input(training_key)
+	read_input = get_mynet_input(["shape","Star"])
 	reshaped_image = tf.cast(read_input.uint8image, tf.float32)
 
 	height = IMAGE_SIZE
@@ -119,8 +122,8 @@ def inputs(eval_data, data_dir, batch_size):
 		num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
 	else:
 		num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
-
-	read_input = get_mynet_input(training_key)
+	key = ["shape", "Star"]
+	read_input = get_mynet_input(key)
 	reshaped_image = tf.cast(read_input.uint8image, tf.float32)
 
 	height = IMAGE_SIZE
