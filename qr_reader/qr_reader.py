@@ -1,4 +1,4 @@
 import qrtools
 qr = qrtools.QR()
-qr.decode("test2.jpg")
+qr.decode("test3.jpg")
 print(qr.data)
