@@ -31,7 +31,7 @@ def get_mynet_input(key):
 	result.depth = 4
 	record_bytes = result.width * result.height * result.depth
 	reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
-	target = target_gen.generate_image_with_kv(key)
+	target = target_gen.generate_image(requested_shape="Star",requested_label="Star")
 	result.label = target.label
 
 	record_bytes = tf.decode_raw(target.image, tf.uint8)
