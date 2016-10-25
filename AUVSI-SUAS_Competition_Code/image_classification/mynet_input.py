@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import os
 import target_gen
+import random
 
 from six.moves import xrange	# pylint: disable=redefined-builtin
 import tensorflow as tf
@@ -13,8 +14,7 @@ import tensorflow as tf
 # architecture will change and any model would need to be retrained.
 IMAGE_SIZE = 64
 
-num_classes = 13
-training_key = 'shape'
+num_classes = 40
 NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
 NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
@@ -29,8 +29,7 @@ def get_mynet_input(key):
 	result.height = 64
 	result.width = 64
 	result.depth = 4
-	record_bytes = result.width * result.height * result.depth
-	reader = tf.FixedLengthRecordReader(record_bytes=record_bytes)
+
 	print(key)
 	if (key[0] == 'shape'):
 		target = target_gen.generate_image(requested_shape=key[1],requested_label=key[0])
@@ -69,8 +68,16 @@ def _generate_image_and_label_batch(image, label, min_queue_examples, batch_size
 
 
 def distorted_inputs(data_dir, batch_size):
-
-	read_input = get_mynet_input(["shape","Star"])
+	letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Rectangle', 'Trapezoid', 'Pentagon', 'Hexagon', 'Heptagon', 'Octagon', 'Star', 'Cross']
+	key_list = ['letter','shape']
+	key_index = random.randint(0,1)
+	if (key_index == 0):
+		key = [key_list[key_index],letter_list[random.randint(0,25)]]
+	elif (key_index == 1):
+		key = [key_list[key_index],shape_list[random.randint(0,13)]]
+	
+	read_input = get_mynet_input(key)
 	reshaped_image = tf.cast(read_input.uint8image, tf.float32)
 
 	height = IMAGE_SIZE

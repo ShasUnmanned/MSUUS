@@ -77,7 +77,7 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	if (requested_label == 'shape'):
 		label = shape_list.index(shape)
 	elif (requested_label == 'letter'):
-		label = letter_list.index(letter)
+		label = letter_list.index(letter)+14
 	
 	
 	return target(composite_path, letter, letter_color, shape, shape_color, image, label)
