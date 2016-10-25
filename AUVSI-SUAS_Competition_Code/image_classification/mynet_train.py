@@ -65,7 +65,7 @@ def train():
 			if step % 1000 == 0 or (step + 1) == FLAGS.max_steps:
 				checkpoint_path = os.path.join(FLAGS.train_dir, 'model.ckpt')
 				saver.save(sess, checkpoint_path, global_step=step)
-				
+				print("checkpoint")
 def main(argv=None):
 	if tf.gfile.Exists(FLAGS.train_dir):
 		tf.gfile.DeleteRecursively(FLAGS.train_dir)

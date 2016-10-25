@@ -15,7 +15,7 @@ import tensorflow as tf
 IMAGE_SIZE = 64
 
 num_classes = 40
-NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
+NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 5000
 NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
 
@@ -36,7 +36,7 @@ def get_mynet_input(key):
 	elif (key[0] == 'letter'):
 		target = target_gen.generate_image(requested_letter=key[1],requested_label=key[0])
 	result.label = target.label
-
+	print("label: " + str(result.label))
 	record_bytes = tf.decode_raw(target.image, tf.uint8)
 
 	depth_major = tf.reshape(record_bytes,[result.depth, result.height, result.width])
