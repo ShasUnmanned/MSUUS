@@ -6,13 +6,10 @@ from Tkinter import *
 
 
 def main():
-	url = 'http://127.0.0.1:8000'
-	username = 'testuser'
-	password = 'testpass'
 	telemetry_open = False
 	
 
-	def connect():
+	def connect(url, username, password):
 		#set up the connection to the interop server at the specified
 		#url with the specified username/password
 		client = interop.Client(url=url,
@@ -42,42 +39,44 @@ def main():
 		                        alphanumeric_color='white')
 		#send the target info to the interop server
 		target = client.post_target(target)
-	
-	def telemetry_tab(telemetry_open):
-		if (telemetry_open == False):
+		print(client.get_targets())
+		print(client.get_obstacles())
+
+	def telemetry_tab():
+		#if (telemetry_open == False):
 			data_rate_label = Label( window, text="Telemetry Data Rate:" )
 			data_rate_field = Entry( window )
-#			data_rate_label.pack()
-#			data_rate_field.pack()
-			telemetry_open = True
-		else:
-			telemetry_open = False
-#			data_rate_label.unpack()
-#			data_rate.field.unpack()
+		#	telemetry_open = True
+		#else:
+		#	telemetry_open = False
 
 	window = Tkinter.Tk()
 	window.title("MSUUS")
 	window.geometry("640x640")
+
+        url = StringVar( window )
+        url.set('http://127.0.0.1:8000')
+        username = StringVar( window )
+        username.set('testuser')
+        password = StringVar( window )
+        password.set('testpass')
 	
 	url_label = Label( window, text="Server URL")
 	url_label.grid(row=0,column=0)
-	url_textbox = Entry( window )
+	url_textbox = Entry( window, textvariable=url )
 	url_textbox.grid(row=0,column=1)
-	url_textbox.insert(0, url)
 
 	username_label = Label( window, text="Username:")
 	username_label.grid(row=1,column=0)
-	username_textbox = Entry( window )
+	username_textbox = Entry( window, textvariable=username )
 	username_textbox.grid(row=1,column=1)
-	username_textbox.insert(0, username)
 
 	password_label = Label( window, text="Password:")
 	password_label.grid(row=2,column=0)
-	password_textbox = Entry( window )
+	password_textbox = Entry( window, textvariable=password )
 	password_textbox.grid(row=2,column=1)
-	password_textbox.insert(0, password)
 
-	connect_button = Button( window, text="Connect", command = connect )
+	connect_button = Button( window, text="Connect", command = connect(url.get(),username.get(),password.get()) )
 	connect_button.grid(row=3,column=1)
 
 	output_label = Label( window, text="Output" )
@@ -85,7 +84,7 @@ def main():
 	output_textbox = Text( window, width=20 )
 	output_textbox.grid(row=5,column=1)
 
-	telemetry_tab_button = Button( window, text="Telemetry", command = telemetry_tab(telemetry_open) )
+	telemetry_tab_button = Button( window, text="Telemetry", command = telemetry_tab() )
 	
 	#url_label.pack()
 	#url_textbox.pack()
