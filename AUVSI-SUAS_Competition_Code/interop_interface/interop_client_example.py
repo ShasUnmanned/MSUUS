@@ -7,9 +7,18 @@ from Tkinter import *
 
 def main():
 	telemetry_open = False
+	client = interop.Client(url="",username="",password="")
 	
+	def upload_telemetry(client, out):
+                telemetry = interop.Telemetry(latitude=38.145215,
+			longitude=-76.427942,
+			altitude_msl=50,
+			uas_heading=90)
+                #send that info to the interop server
+                client.post_telemetry(telemetry)
+		out.insert("Telemetry posted")
 
-	def connect(url, username, password):
+	def connect(url, username, password, out):
 		#set up the connection to the interop server at the specified
 		#url with the specified username/password
 		client = interop.Client(url=url,
@@ -39,8 +48,8 @@ def main():
 		                        alphanumeric_color='white')
 		#send the target info to the interop server
 		target = client.post_target(target)
-		print(client.get_targets())
-		print(client.get_obstacles())
+		out.insert(END, client.get_obstacles())
+		
 
 	def telemetry_tab():
 		#if (telemetry_open == False):
@@ -76,13 +85,14 @@ def main():
 	password_textbox = Entry( window, textvariable=password )
 	password_textbox.grid(row=2,column=1)
 
-	connect_button = Button( window, text="Connect", command = connect(url.get(),username.get(),password.get()) )
-	connect_button.grid(row=3,column=1)
-
 	output_label = Label( window, text="Output" )
 	output_label.grid(row=5,column=0)
-	output_textbox = Text( window, width=20 )
+	output_textbox = Text( window )
 	output_textbox.grid(row=5,column=1)
+
+        connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
+        connect_button.grid(row=3,column=1)
+
 
 	telemetry_tab_button = Button( window, text="Telemetry", command = telemetry_tab() )
 	
@@ -96,7 +106,8 @@ def main():
 #	output_label.pack()
 #	output_textbox.pack()
 #	telemetry_tab_button.pack()
-	
+
+	window.after(500, lambda: upload_telemetry(client,output_textbox))	
 	window.mainloop()
 
 
