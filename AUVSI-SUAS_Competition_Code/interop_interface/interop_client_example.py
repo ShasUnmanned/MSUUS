@@ -17,6 +17,12 @@ def main():
                 #send that info to the interop server
                 client.post_telemetry(telemetry)
 		out.insert(END,"Telemetry posted")
+	
+	def download_server_info(client,out):
+		try:
+			out.insert(END, 'downloading server info')
+		except:
+			out.insert(END, 'something went wrong when downloading server info')
 
 	def upload_target(client, out):
 		try:
