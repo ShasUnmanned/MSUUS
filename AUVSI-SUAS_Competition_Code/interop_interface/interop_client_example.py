@@ -17,14 +17,10 @@ def main():
                 #send that info to the interop server
                 client.post_telemetry(telemetry)
 		out.insert(END,"Telemetry posted")
-	
-	def download_server_info(client,out):
-		try:
-			out.insert(END, 'downloading server info')
-		except:
-			out.insert(END, 'something went wrong when downloading server info')
 
-	def upload_target(client, out):
+	def upload_target(client, target_json, out):
+		# this is all boilerplate right now, we need to send target info as json
+		# or extract the json info and send it this way.
 		try:
                         #create a target object. we will be building this objec$
                         #the output of our image classification program, from v$
@@ -53,14 +49,6 @@ def main():
 			                        password=password)
 		except:
 			out.insert(END, "something when wrong when trying to connect")	
-
-	def telemetry_tab():
-		#if (telemetry_open == False):
-			data_rate_label = Label( window, text="Telemetry Data Rate:" )
-			data_rate_field = Entry( window )
-		#	telemetry_open = True
-		#else:
-		#	telemetry_open = False
 
 	window = Tkinter.Tk()
 	window.title("MSUUS")
@@ -92,29 +80,18 @@ def main():
 	output_label.grid(row=5,column=0)
 	output_textbox = Text( window )
 	output_textbox.grid(row=5,column=1)
+	
+	data_rate_label = Label( window, text="Telemetry Data Rate:" )
+	data_rate_label.grid(row=6,column=0)
+	data_rate_field = Text( window, width=10, height=1 )
+	data_rate_label.grid(row=7,column=0)
 
-        connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
-        connect_button.grid(row=3,column=0)
-
-
-	telemetry_tab_button = Button( window, text="Telemetry", command = telemetry_tab() )
-	#telemetry_tab_button.grid(row=3,column=2)
-
+    connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
+    connect_button.grid(row=3,column=0)
 
 	target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, output_textbox) )
 	target_upload_button.grid(row=3,column=1)
 
-
-	#url_label.pack()
-	#url_textbox.pack()
-	#username_label.pack()
-	#username_textbox.pack()
-	#password_label.pack()
-	#password_textbox.pack()
-#	connect_button.pack()
-#	output_label.pack()
-#	output_textbox.pack()
-#	telemetry_tab_button.pack()
 
 	window.after(500, lambda: upload_telemetry(client,output_textbox))	
 	window.mainloop()
