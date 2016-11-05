@@ -36,7 +36,7 @@ def main():
                                                 alphanumeric_color='white')
                         #send the target info to the interop server
                         target = client.post_target(target)
-                        out.insert(END, client.get_obstacles())
+                        out.insert(END, client.get_targets())
 		except:
 			out.insert(END, 'Something went wrong when uploading target\n')
 
@@ -80,9 +80,11 @@ def main():
 
 	output_label = Label( window, text="Output" )
 	output_label.place(x=10, y=190)
-	output_textbox = Text( window, width=80 )
+	output_textbox = Text( window, width=79, wrap=WORD )
 	output_textbox.place(x=10, y=210)
-	
+	output_scrollbar = Scrollbar( window, command=output_textbox.yview )
+	output_textbox['yscrollcommand'] = output_scrollbar.set
+	output_scrollbar.place(x=570,y=210,height=340)
 	
 	data_rate_label = Label( window, text="Telemetry Data Rate:" )
 	data_rate_label.place(x=290, y=10)
@@ -92,8 +94,8 @@ def main():
 	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
 	connect_button.place(x=10, y=90)
 
-	#target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, output_textbox) )
-	#target_upload_button.place(x=10, y=150)
+	target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, "{'id':1}",output_textbox) )
+	target_upload_button.place(x=10, y=150)
 	
 
 	window.after(500, lambda: upload_telemetry(client,output_textbox))	

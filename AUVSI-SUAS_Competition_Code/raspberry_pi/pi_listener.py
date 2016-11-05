@@ -61,6 +61,17 @@ def take_picture():
 		"image": encoded_image.
 		})
 
+@app.route('/restart_listener')
+def restart_listener():
+	print('pi listener is restarting')
+	executable = sys.executable
+	args = sys.argv[:]
+	args.insert(0, sys.executable)
+
+	time.sleep(1)
+	os.execvp(executable, args)
+	exit()
+
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5000)
