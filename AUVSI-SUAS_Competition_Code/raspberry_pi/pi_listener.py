@@ -40,6 +40,9 @@ def run_command():
 
 @app.route('/get_gps', methods=['GET'])
 def get_gps():
+	#######################################
+	# need to actually get the gps somehow#
+	#######################################
 	return Flask.jsonify( {
 		"latitude": latitude,
 		"longitude": longitude,
@@ -64,7 +67,9 @@ def take_picture():
 
 @app.route('/bottle_release')
 def bottle_release():
-	#do_release():
+	######################################
+	#do_release():                       #
+	######################################
 	return Flask.jsonify( {
 		"bottle_release":"released",
 		"release_time":time.time(),
