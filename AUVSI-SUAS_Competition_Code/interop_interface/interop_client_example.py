@@ -8,7 +8,8 @@ from Tkinter import *
 def main():
 	telemetry_open = False
 	client = interop.Client(url='http://127.0.0.1:8000', username='testuser', password='testpass')
-	
+	dataRate = 0
+
 	def upload_telemetry(client, out):
                 telemetry = interop.Telemetry(latitude=38.145215,
 			longitude=-76.427942,
@@ -16,7 +17,7 @@ def main():
 			uas_heading=90)
                 #send that info to the interop server
                 client.post_telemetry(telemetry)
-		out.insert(END,"Telemetry posted")
+		out.insert(END,"Telemetry posted\n")
 
 	def upload_target(client, target_json, out):
 		# this is all boilerplate right now, we need to send target info as json
@@ -37,7 +38,7 @@ def main():
                         target = client.post_target(target)
                         out.insert(END, client.get_obstacles())
 		except:
-			out.insert(END, 'something went wrong when uploading target')
+			out.insert(END, 'Something went wrong when uploading target\n')
 
 
 	def connect(url, username, password, out):
@@ -47,12 +48,13 @@ def main():
 			client = interop.Client(url=url,
 			                        username=username,
 			                        password=password)
+			out.insert(END, "Connected to " + url + " with username '" + username + "' and password '" + password + "'.\n")
 		except:
-			out.insert(END, "something when wrong when trying to connect")	
+			out.insert(END, "Something when wrong when trying to connect\n")	
 
 	window = Tkinter.Tk()
 	window.title("MSUUS")
-	window.geometry("660x500")
+	window.geometry("590x560")
 
         url = StringVar( window )
         url.set('http://127.0.0.1:8000')
@@ -62,36 +64,37 @@ def main():
         password.set('testpass')
 	
 	url_label = Label( window, text="Server URL")
-	url_label.grid(row=0,column=0)
+	url_label.place(x=10,y=10)
 	url_textbox = Entry( window, textvariable=url )
-	url_textbox.grid(row=0,column=1)
+	url_textbox.place(x=100, y=10)
 
 	username_label = Label( window, text="Username:")
-	username_label.grid(row=1,column=0)
+	username_label.place(x=10, y=30)
 	username_textbox = Entry( window, textvariable=username )
-	username_textbox.grid(row=1,column=1)
+	username_textbox.place(x=100, y=30)
 
 	password_label = Label( window, text="Password:")
-	password_label.grid(row=2,column=0)
+	password_label.place(x=10, y=50)
 	password_textbox = Entry( window, textvariable=password )
-	password_textbox.grid(row=2,column=1)
+	password_textbox.place(x=100, y=50)
 
 	output_label = Label( window, text="Output" )
-	output_label.grid(row=5,column=0)
-	output_textbox = Text( window )
-	output_textbox.grid(row=5,column=1)
+	output_label.place(x=10, y=190)
+	output_textbox = Text( window, width=80 )
+	output_textbox.place(x=10, y=210)
+	
 	
 	data_rate_label = Label( window, text="Telemetry Data Rate:" )
-	data_rate_label.grid(row=6,column=0)
-	data_rate_field = Text( window, width=10, height=1 )
-	data_rate_label.grid(row=7,column=0)
+	data_rate_label.place(x=290, y=10)
+	data_rate_field = Entry( window, textvariable=dataRate )
+	data_rate_field.place(x=430, y=10, width=40)
 
-    connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
-    connect_button.grid(row=3,column=0)
+	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
+	connect_button.place(x=10, y=90)
 
 	target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, output_textbox) )
-	target_upload_button.grid(row=3,column=1)
-
+	target_upload_button.place(x=10, y=150)
+	
 
 	window.after(500, lambda: upload_telemetry(client,output_textbox))	
 	window.mainloop()
