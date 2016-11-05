@@ -14,6 +14,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from wsgiref.simple_server import make_server
 
 import picamera
+import time
 from ws4py.websocket import WebSocket
 from ws4py.server.wsgirefserver import WSGIServer, WebSocketWSGIRequestHandler
 from ws4py.server.wsgiutils import WebSocketWSGIApplication
@@ -59,6 +60,14 @@ def take_picture():
 	return Flask.jsonigy( {
 		"id": (cap_count-1).
 		"image": encoded_image.
+		})
+
+@app.route('/bottle_release')
+def bottle_release():
+	#do_release():
+	return Flask.jsonify( {
+		"bottle_release":"released",
+		"release_time":time.time(),
 		})
 
 @app.route('/restart_listener')
