@@ -19,10 +19,14 @@ from ws4py.server.wsgirefserver import WSGIServer, WebSocketWSGIRequestHandler
 from ws4py.server.wsgiutils import WebSocketWSGIApplication
 
 app = Flask(__name__)
+
+camera = picamera.PiCamera()
+camera.resolution = (3280, 2464)
+cap_count = 0
  
 @app.route('/')
 def hello_world():
-    return 'Hello World!'
+	return 'MSUUS PI PAYLOAD'
 
 # run a command (contained in a json object) passed by POST method as a shell command on the pi
 @app.route('/run_command', methods=['GET', `'POST'])
@@ -33,18 +37,27 @@ def run_command():
 		"status": "ok",
 		})
 
-@app.route('/get_gps', methods=['GET', 'POST'])
+@app.route('/get_gps', methods=['GET'])
 def get_gps():
 	return Flask.jsonify( {
 		"latitude": latitude,
 		"longitude": longitude,
 		})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+@app.route('/take_picture', methods=['GET'])
+def take_picture():
+	cap_count++
+	sleep(2)
+	filename = 'test_capture_'+str(cap_count-1)+'.jpg'
+	camera.capture(filename)
+	return flask.send_file(filename, mimetype='image/jpg')
 
-@app.route('/start_video_stream', methods=['GET', 'POST'])
+if __name__ == '__main__':
+	app.run(host='0.0.0.0', port=5000)
+
 '''
+@app.route('/start_video_stream', methods=['GET', 'POST'])
+
 ###########################################
 # CONFIGURATION
 WIDTH = 640
