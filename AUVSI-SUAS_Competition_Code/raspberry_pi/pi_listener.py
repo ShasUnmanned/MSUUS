@@ -25,7 +25,7 @@ def hello_world():
     return 'Hello World!'
 
 # run a command (contained in a json object) passed by POST method as a shell command on the pi
-@app.route('/run_command', methods=['GET', 'POST'])
+@app.route('/run_command', methods=['GET', `'POST'])
 def run_command():
 	request_data = request.get_json()
 	subprocess.call([request_data['command'], request_data['options']])
@@ -44,6 +44,7 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 
 @app.route('/start_video_stream', methods=['GET', 'POST'])
+'''
 ###########################################
 # CONFIGURATION
 WIDTH = 640
@@ -196,6 +197,6 @@ def main():
             print('Waiting for websockets thread to finish')
             websocket_thread.join()
 
-
+'''
 if __name__ == '__main__':
     main()

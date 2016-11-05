@@ -92,8 +92,8 @@ def main():
 	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
 	connect_button.place(x=10, y=90)
 
-	target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, output_textbox) )
-	target_upload_button.place(x=10, y=150)
+	#target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, output_textbox) )
+	#target_upload_button.place(x=10, y=150)
 	
 
 	window.after(500, lambda: upload_telemetry(client,output_textbox))	
