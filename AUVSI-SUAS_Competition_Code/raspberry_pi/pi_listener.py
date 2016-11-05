@@ -50,7 +50,17 @@ def take_picture():
 	sleep(2)
 	filename = 'test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
-	return flask.send_file(filename, mimetype='image/jpg')
+
+	#return flask.send_file(filename, mimetype='image/jpg')
+	
+	with open(filename, "rb") as image_file:
+    		encoded_image = base64.b64encode(image_file.read())
+
+	return Flask.jsonigy( {
+		"id": (cap_count-1).
+		"image": encoded_image.
+		})
+
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5000)
