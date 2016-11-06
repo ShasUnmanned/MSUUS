@@ -30,7 +30,7 @@ def hello_world():
 	return 'MSUUS PI PAYLOAD'
 
 # run a command (contained in a json object) passed by POST method as a shell command on the pi
-@app.route('/run_command', methods=['GET', `'POST'])
+@app.route('/run_command', methods=['GET', 'POST'])
 def run_command():
 	request_data = request.get_json()
 	subprocess.call([request_data['command'], request_data['options']])
@@ -246,5 +246,3 @@ def main():
             websocket_thread.join()
 
 '''
-if __name__ == '__main__':
-    main()
