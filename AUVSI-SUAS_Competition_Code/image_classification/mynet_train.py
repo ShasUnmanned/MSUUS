@@ -23,7 +23,7 @@ def train():
 		global_step = tf.Variable(0, trainable=False)
 		
 		images, labels = mynet.distorted_inputs()
-		
+		print(images)
 		logits = mynet.inference(images)
 		
 		loss =mynet.loss(logits, labels)
@@ -58,11 +58,11 @@ def train():
 				format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f sec/batch)')
 				print(format_str % (datetime.now(), step, loss_value, examples_per_sec, sec_per_batch))
 				
-			if step % 100 == 0:
+			if step % 50 == 0:
 				summary_str = sess.run(summary_op)
 				summary_writer.add_summary(summary_str, step)
 				
-			if step % 1000 == 0 or (step + 1) == FLAGS.max_steps:
+			#if step % 100 == 0 or (step + 1) == FLAGS.max_steps:
 				checkpoint_path = os.path.join(FLAGS.train_dir, 'model.ckpt')
 				saver.save(sess, checkpoint_path, global_step=step)
 				print("checkpoint")

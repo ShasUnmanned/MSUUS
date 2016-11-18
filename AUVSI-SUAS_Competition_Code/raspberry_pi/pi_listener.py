@@ -1,4 +1,3 @@
-
 from flask import Flask
 from subprocess import call
 import sys
@@ -61,8 +60,8 @@ def take_picture():
     		encoded_image = base64.b64encode(image_file.read())
 
 	return Flask.jsonigy( {
-		"id": (cap_count-1).
-		"image": encoded_image.
+		"id": (cap_count-1),
+		"image": encoded_image,
 		})
 
 @app.route('/bottle_release')
