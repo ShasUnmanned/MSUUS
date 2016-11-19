@@ -35,4 +35,30 @@ img_distortion.add_random_blur(sigma_max=3.)
 ### network architecture
 ###
 
-network = input_data(shape=[None, 
+network = input_data(shape=[None, 64, 64, 3], 
+	data_preprocessing=img_preprocessor,
+	data_augmentation=img_distortion)
+
+# convolution 
+network = conv_2d(network, 64, 3, activation='relu')
+
+# max pooling
+network = max_pool_2d(network, 2)
+
+# convolution 2
+network = conv_2d(network, 128, 3, activation='relu')
+
+# convolution 3
+network = conv_2d(network, 128, 3, activation='relu')
+
+# max pooling 2
+network = max_pool_2d(network, 2)
+
+
+
+
+
+
+
+
+
