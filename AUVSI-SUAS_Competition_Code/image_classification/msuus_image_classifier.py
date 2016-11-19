@@ -10,10 +10,10 @@ import pickle
 
 # load dataset of auvsi targets
 # or generate them on demand here??
-image, label, image_test, label_test = pickle.load(open("auvsi_target_dataset.pkl", "rb"))
+images, labels, images_test, labels_test = pickle.load(open("auvsi_target_dataset.pkl", "rb"))
 
 # shuffle images
-image, label = shuffle(image, label)
+images, labels = shuffle(images, labels)
 
 # create preprocessor to normalize images
 img_preprocessor = ImagePreprocessing()
@@ -54,7 +54,19 @@ network = conv_2d(network, 128, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
 
+# fully-connected
+network = fully_connected(network, 1024, activation='relu')
 
+# dropout
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
+
+
+model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='msuus-target-classifier.tfl.ckpt')
+
+model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
+
+model.save("msuus-target-classifier.tfl")
+print("Network trained and saved as msuus-target-classifier.tfl")
 
 
 
