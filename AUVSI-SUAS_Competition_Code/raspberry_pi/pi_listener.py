@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from subprocess import call
 import sys
 import io
@@ -9,14 +9,17 @@ from string import Template
 from struct import Struct
 from threading import Thread
 from time import sleep, time
-from http.server import HTTPServer, BaseHTTPRequestHandler
+#from http.server import HTTPServer, BaseHTTPRequestHandler
+from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from wsgiref.simple_server import make_server
 
 import picamera
 import time
-from ws4py.websocket import WebSocket
-from ws4py.server.wsgirefserver import WSGIServer, WebSocketWSGIRequestHandler
-from ws4py.server.wsgiutils import WebSocketWSGIApplication
+import base64
+
+#from ws4py.websocket import WebSocket
+#from ws4py.server.wsgirefserver import WSGIServer, WebSocketWSGIRequestHandler
+#from ws4py.server.wsgiutils import WebSocketWSGIApplication
 
 app = Flask(__name__)
 
@@ -42,14 +45,15 @@ def get_gps():
 	#######################################
 	# need to actually get the gps somehow#
 	#######################################
-	return Flask.jsonify( {
+	return jsonify( {
 		"latitude": latitude,
 		"longitude": longitude,
 		})
 
 @app.route('/take_picture', methods=['GET'])
 def take_picture():
-	cap_count++
+	global cap_count, camera
+	cap_count += 1
 	sleep(2)
 	filename = 'test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
@@ -59,7 +63,7 @@ def take_picture():
 	with open(filename, "rb") as image_file:
     		encoded_image = base64.b64encode(image_file.read())
 
-	return Flask.jsonigy( {
+	return jsonify( {
 		"id": (cap_count-1),
 		"image": encoded_image,
 		})
@@ -69,7 +73,7 @@ def bottle_release():
 	######################################
 	#do_release():                       #
 	######################################
-	return Flask.jsonify( {
+	return jsonify( {
 		"bottle_release":"released",
 		"release_time":time.time(),
 		})
