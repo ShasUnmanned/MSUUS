@@ -13,7 +13,7 @@ import target_gen
 # load dataset of auvsi targets
 # or generate them on demand here??
 num_training_images = 50
-num_testing_images = 50
+num_testing_images = 10
 images = [None] * num_training_images
 labels = [None] * num_training_images
 images_test = [None] * num_testing_images
@@ -85,16 +85,10 @@ network = fully_connected(network, 1, activation='softmax')
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
 
 
-model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='msuus-target-classifier.tfl.ckpt')
+model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
 
-model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
+model.fit(images, labels, n_epoch=5, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
 
-model.save("msuus-target-classifier.tfl", "checkpoints/")
+model.save("msuus-target-classifier.tfl")
 print("Network trained and saved as msuus-target-classifier.tfl")
 
-
-
-
-
-
-target_gen.generate_image(return_type = "set")
