@@ -25,7 +25,7 @@ def replace_color(image_path, color):
 	
 	return img
 
-def generate_image(requested_letter = None, requested_shape = None, requested_letter_color = None, requested_shape_color = None, requested_label = None):	
+def generate_image(requested_letter = None, requested_shape = None, requested_letter_color = None, requested_shape_color = None, requested_label = None, return_type = "target"):	
 	letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 	shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Rectangle', 'Trapezoid', 'Pentagon', 'Hexagon',
 'Heptagon', 'Octagon', 'Star', 'Cross']
@@ -72,16 +72,18 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	temp.text((108, 100),letter,letter_color,font=font)
 	composite = composite.resize((64,64), Image.ANTIALIAS)
 	composite.save('composites/'+composite_path)
-	image = composite.convert("RGBA").tobytes("raw", "RGBA")
+	image = composite.convert("RGBA")
 	
-	if (requested_label == 'shape'):
-		label = shape_list.index(shape)
-	elif (requested_label == 'letter'):
-		label = letter_list.index(letter)+14
+	#if (requested_label == 'shape'):
+	#	label = shape_list.index(shape)
+	#elif (requested_label == 'letter'):
+	#	label = letter_list.index(letter)+14
+	label = int(str(shape_list.index(shape)) + str(letter_list.index(letter)))
 	
-	
-	return target(composite_path, letter, letter_color, shape, shape_color, image, label)
-
+	if (return_type == "target"):
+		return target(composite_path, letter, letter_color, shape, shape_color, image, label)
+	elif (return_type == "set"):
+		return image, label
 
 
 
