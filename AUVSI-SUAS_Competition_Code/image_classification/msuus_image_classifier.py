@@ -12,8 +12,8 @@ import target_gen
 
 # load dataset of auvsi targets
 # or generate them on demand here??
-num_training_images = 50
-num_testing_images = 10
+num_training_images = 1000
+num_testing_images = 100
 images = [None] * num_training_images
 labels = [None] * num_training_images
 images_test = [None] * num_testing_images
@@ -23,7 +23,6 @@ for i in range(0, num_training_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "set")
 	images[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))
 	labels[i] = np.reshape(tmp_label, (-1))
-	print(labels[i])
 
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "set")
@@ -79,7 +78,7 @@ network = fully_connected(network, 1024, activation='relu')
 network = dropout(network, 0.5)
 
 # fully-connected final
-network = fully_connected(network, 1, activation='softmax')
+network = fully_connected(network, 2, activation='softmax')
 
 
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
@@ -87,7 +86,7 @@ network = regression(network, optimizer='adam', loss='categorical_crossentropy',
 
 model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
 
-model.fit(images, labels, n_epoch=5, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
+model.fit(images, labels, n_epoch=50, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
 
 model.save("msuus-target-classifier.tfl")
 print("Network trained and saved as msuus-target-classifier.tfl")

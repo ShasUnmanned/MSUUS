@@ -71,14 +71,14 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	w, h = temp.textsize(letter)
 	temp.text((108, 100),letter,letter_color,font=font)
 	composite = composite.resize((64,64), Image.ANTIALIAS)
-	composite.save('composites/'+composite_path)
+	#composite.save('composites/'+composite_path)
 	image = composite.convert("RGBA")
 	
 	#if (requested_label == 'shape'):
 	#	label = shape_list.index(shape)
 	#elif (requested_label == 'letter'):
 	#	label = letter_list.index(letter)+14
-	label = int(str(shape_list.index(shape)) + str(letter_list.index(letter)))
+	label = [shape_list.index(shape),letter_list.index(letter)]
 	
 	if (return_type == "target"):
 		return target(composite_path, letter, letter_color, shape, shape_color, image, label)
