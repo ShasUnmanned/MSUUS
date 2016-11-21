@@ -1,5 +1,4 @@
 import tflearn
-import tensorflow as tf
 import numpy as np
 from tflearn.data_utils import shuffle
 from tflearn.layers.core import input_data, dropout, fully_connected
