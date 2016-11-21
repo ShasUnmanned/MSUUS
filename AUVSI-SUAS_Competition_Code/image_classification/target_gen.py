@@ -1,6 +1,7 @@
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+from PIL import ImageFilter
 import random
 import webcolors
 
@@ -72,10 +73,10 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	font = ImageFont.truetype("LiberationMono-Bold.ttf", 64)
 	W, H = 256, 256
 	w, h = temp.textsize(letter)
-	temp.text((108, 100),letter,letter_color,font=font)
-	composite = composite.filter(ImageFilter.EMBOSS)
+	temp.text((108, 99),letter,letter_color,font=font)
+	composite = composite.filter(ImageFilter.EDGE_ENHANCE)
 	composite = composite.resize((64,64), Image.ANTIALIAS)
-	#composite.save('composites/'+composite_path)
+	composite.save('composites/'+composite_path)
 	image = composite.convert("RGBA")
 	
 	#if (requested_label == 'shape'):

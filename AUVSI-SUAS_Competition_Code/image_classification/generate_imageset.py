@@ -10,11 +10,10 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 counter = 0
 for q in range(0, num_variations):
 	for i in range(0, 26):
-		ls_str = 'variation ' + str(q) + ', letter ' + letter_list[i]
 		for a in range(0, 13):
-			tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], requested_shape=shape_list[a], return_type = "set")
-			images[counter] = np.reshape(tmp_img.getdata(), (64, 64, -1))
-			labels[counter] = np.reshape(tmp_label, (-1))
-			print(ls_str + ", shape " + shape_list[a])
-
+			tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
+				requested_shape=shape_list[a], 
+				requested_letter_color="White", 
+				requested_shape_color="Black", 
+				return_type = "set")
 			counter += 1
