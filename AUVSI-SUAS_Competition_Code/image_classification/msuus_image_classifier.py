@@ -11,7 +11,7 @@ import target_gen
 
 # load dataset of auvsi targets
 # or generate them on demand here??
-num_variations = 1
+num_variations = 16
 num_training_images = int(26*13)*num_variations
 num_testing_images = 16
 images = [None] * num_training_images
@@ -66,7 +66,7 @@ img_distortion = ImageAugmentation()
 # only flip left/right for shape training
 #img_distortion.add_random_flip_leftright()
 
-#img_distortion.add_random_rotation(max_angle=360.)
+img_distortion.add_random_rotation(max_angle=360.)
 img_distortion.add_random_blur(sigma_max=3.)
 
 
@@ -80,7 +80,7 @@ network = input_data(shape=[None, 64, 64, 4],
 	data_augmentation=img_distortion)
 
 # convolution 
-network = conv_2d(network, 64, 8, activation='relu')
+network = conv_2d(network, 32, 8, activation='relu')
 
 # max pooling
 network = max_pool_2d(network, 2)
@@ -109,7 +109,10 @@ network = regression(network, optimizer='adam', loss='categorical_crossentropy',
 
 model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
 
-model.fit(images, labels, n_epoch=50, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
+# if previously trained model is available use that
+model.load('msuus-target-classifier.tfl')
+
+model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
 
 model.save("msuus-target-classifier.tfl")
 print("Network trained and saved as msuus-target-classifier.tfl")
