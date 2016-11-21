@@ -25,6 +25,9 @@ def replace_color(image_path, color):
 	
 	return img
 
+def pair(k1, k2):
+	return ((k1 + k2)*(k1 + k2 + 1))/2 + k2
+
 def generate_image(requested_letter = None, requested_shape = None, requested_letter_color = None, requested_shape_color = None, requested_label = None, return_type = "target"):	
 	letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 	shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Rectangle', 'Trapezoid', 'Pentagon', 'Hexagon',
@@ -78,7 +81,9 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	#	label = shape_list.index(shape)
 	#elif (requested_label == 'letter'):
 	#	label = letter_list.index(letter)+14
-	label = [shape_list.index(shape),letter_list.index(letter)]
+	label = [0] * 729
+	label[pair(shape_list.index(shape),letter_list.index(letter))] = 1
+	#print(label.index(1))
 	
 	if (return_type == "target"):
 		return target(composite_path, letter, letter_color, shape, shape_color, image, label)
