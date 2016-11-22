@@ -8,24 +8,18 @@ from tflearn.data_preprocessing import ImagePreprocessing
 from tflearn.data_augmentation import ImageAugmentation
 import pickle
 import target_gen
-
+from PIL import Image
+from PIL import ImageFilter
 # load dataset of auvsi targets
 # or generate them on demand here??
 num_variations = 16
 num_training_images = int(26*13)*num_variations
-num_testing_images = 16
+num_testing_images = 16*num_variations
 images = [None] * num_training_images
 labels = [None] * num_training_images
 images_test = [None] * num_testing_images
 labels_test = [None] * num_testing_images
 
-'''
-for i in range(0, num_training_images):
-	tmp_img, tmp_label = target_gen.generate_image(return_type = "set")
-	images[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))
-	labels[i] = np.reshape(tmp_label, (-1))
-	print("generating training image " + str(i+1) + "/" + str(num_training_images))
-'''
 
 letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
@@ -33,20 +27,35 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 
 counter = 0
-for q in range(0, num_variations):
-	for i in range(0, 26):
-		ls_str = 'variation ' + str(q) + ', letter ' + letter_list[i]
-		for a in range(0, 13):
-			tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], requested_shape=shape_list[a], return_type = "set")
-			images[counter] = np.reshape(tmp_img.getdata(), (64, 64, -1))
+for i in range(0, 26):
+	for a in range(0, 13):
+		tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
+			requested_shape=shape_list[a], 
+			requested_letter_color="White", 
+			requested_shape_color="Black", 
+			return_type = "set")
+		
+		for q in range(0, num_variations):
+			tmp_img_2 = tmp_img
+			tmp_img_2 = tmp_img_2.convert('L')
+			tmp_img_2 = tmp_img_2.filter(ImageFilter.EDGE_ENHANCE)
+			tmp_img_2 = tmp_img_2.filter(ImageFilter.CONTOUR)
+			tmp_img_2 = tmp_img_2.filter(ImageFilter.EDGE_ENHANCE)
+			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
 			labels[counter] = np.reshape(tmp_label, (-1))
-			print(ls_str + ", shape " + shape_list[a])
+
+			ls_str = 'letter ' + letter_list[i]
+			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
 			counter += 1
 
 
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "set")
+	tmp_img = tmp_img.convert('L')
+	tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE)
+	tmp_img = tmp_img.filter(ImageFilter.CONTOUR)
+	tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE)
 	images_test[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))
 	labels_test[i] = np.reshape(tmp_label, (-1))
 	print("generating testing image " + str(i+1) + "/" + str(num_testing_images))
@@ -75,7 +84,7 @@ img_distortion.add_random_blur(sigma_max=3.)
 ### network architecture
 ###
 
-network = input_data(shape=[None, 64, 64, 4], 
+network = input_data(shape=[None, 64, 64, 1], 
 	data_preprocessing=img_preprocessor,
 	data_augmentation=img_distortion)
 
@@ -110,7 +119,7 @@ network = regression(network, optimizer='adam', loss='categorical_crossentropy',
 model = tflearn.DNN(network, tensorboard_verbose=0, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
 
 # if previously trained model is available use that
-model.load('msuus-target-classifier.tfl')
+#model.load('msuus-target-classifier.tfl')
 
 model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='msuus-target-classifier')
 

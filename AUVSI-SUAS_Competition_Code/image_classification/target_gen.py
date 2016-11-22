@@ -76,7 +76,7 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	temp.text((108, 99),letter,letter_color,font=font)
 	composite = composite.filter(ImageFilter.EDGE_ENHANCE)
 	composite = composite.resize((64,64), Image.ANTIALIAS)
-	composite.save('composites/'+composite_path)
+	#composite.save('composites/'+composite_path)
 	image = composite.convert("RGBA")
 	
 	#if (requested_label == 'shape'):
