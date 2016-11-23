@@ -43,7 +43,6 @@ for i in range(0, 26):
 			tmp_img_2 = tmp_img_2.filter(ImageFilter.EDGE_ENHANCE)
 			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
 			labels[counter] = np.reshape(tmp_label, (-1))
-
 			ls_str = 'letter ' + letter_list[i]
 			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
@@ -89,7 +88,7 @@ network = input_data(shape=[None, 64, 64, 1],
 	data_augmentation=img_distortion)
 
 # convolution 
-network = conv_2d(network, 32, 8, activation='relu')
+network = conv_2d(network, 128, 8, activation='relu')
 
 # max pooling
 network = max_pool_2d(network, 2)
@@ -98,19 +97,19 @@ network = max_pool_2d(network, 2)
 network = conv_2d(network, 64, 4, activation='relu')
 
 # convolution 3
-network = conv_2d(network, 64, 4, activation='relu')
+#network = conv_2d(network, 32, 2, activation='relu')
 
 # max pooling 2
 network = max_pool_2d(network, 2)
 
 # fully-connected
-network = fully_connected(network, 1024, activation='relu')
+network = fully_connected(network, 128, activation='relu')
 
 # dropout
 network = dropout(network, 0.5)
 
 # fully-connected final
-network = fully_connected(network, 729, activation='softmax')
+network = fully_connected(network, 2, activation='softmax')
 
 
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)

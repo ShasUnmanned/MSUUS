@@ -83,9 +83,9 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	#	label = shape_list.index(shape)
 	#elif (requested_label == 'letter'):
 	#	label = letter_list.index(letter)+14
-	label = [0] * 729
-	label[pair(shape_list.index(shape),letter_list.index(letter))] = 1
-	#print(label.index(1))
+	#label = [0] * 729
+	#label[pair(shape_list.index(shape),letter_list.index(letter))] = 1
+	label = [shape_list.index(shape), letter_list.index(letter)]
 	
 	if (return_type == "target"):
 		return target(composite_path, letter, letter_color, shape, shape_color, image, label)
