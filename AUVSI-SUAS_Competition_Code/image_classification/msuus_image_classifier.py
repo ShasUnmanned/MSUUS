@@ -12,7 +12,7 @@ from PIL import Image
 from PIL import ImageFilter
 # load dataset of auvsi targets
 # or generate them on demand here??
-num_variations = 1
+num_variations = 24
 num_training_images = int(26*13)*num_variations
 num_testing_images = 32*num_variations
 images = [None] * num_training_images
@@ -66,6 +66,7 @@ for i in range(0, num_testing_images):
 
 # shuffle images
 images, labels = shuffle(images, labels)
+images_test, labels_test = shuffle(images_test, labels_test)
 
 # create preprocessor to normalize images
 img_preprocessor = ImagePreprocessing()
@@ -78,8 +79,8 @@ img_distortion = ImageAugmentation()
 # only flip left/right for shape training
 #img_distortion.add_random_flip_leftright()
 
-#img_distortion.add_random_rotation(max_angle=360)
-#img_distortion.add_random_blur(sigma_max=3.)
+img_distortion.add_random_rotation(max_angle=360)
+img_distortion.add_random_blur(sigma_max=1.)
 
 
 
@@ -92,22 +93,22 @@ network = input_data(shape=[None, 64, 64, 1],
 	data_augmentation=img_distortion)
 
 # convolution 
-network = conv_2d(network, 64, 8, activation='relu')
+network = conv_2d(network, 64, 4, activation='relu')
 
 # max pooling
 network = max_pool_2d(network, 2)
 
 # convolution 2
-network = conv_2d(network, 64, 4, activation='relu')
+network = conv_2d(network, 96, 4, activation='relu')
 
 # convolution 3
-network = conv_2d(network, 32, 8, activation='relu')
+network = conv_2d(network, 128, 4, activation='relu')
 
 # max pooling 2
 network = max_pool_2d(network, 2)
 
 # fully-connected
-network = fully_connected(network, 64, activation='relu')
+network = fully_connected(network, 512, activation='relu')
 
 # dropout
 network = dropout(network, 0.5)
@@ -119,7 +120,7 @@ network = fully_connected(network, 2, activation='softmax')
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
 
 
-model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/home/salvi/checkpoints/msuus-target-classifier.tfl.ckpt')
+model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
 
 # if previously trained model is available use that
 #model.load('msuus-target-classifier.tfl')
