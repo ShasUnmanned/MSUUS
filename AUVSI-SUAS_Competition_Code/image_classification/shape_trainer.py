@@ -33,7 +33,7 @@ for i in range(0, 26):
 			requested_shape=shape_list[a], 
 			requested_letter_color="White", 
 			requested_shape_color="Black", 
-			return_type = "set")
+			return_type = "shape")
 		
 		for q in range(0, num_variations):
 			tmp_img_2 = tmp_img
@@ -47,13 +47,13 @@ for i in range(0, 26):
 			#labels[counter] = np.reshape(tmp_label, (-1))
 			#labels[counter] = tflearn.data_utils.to_categorical(tmp_label,338)
 			labels[counter] = tmp_label			
-			#print(str(labels[counter]))
+			print(str(labels[counter]))
 			ls_str = 'letter ' + letter_list[i]
 			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
 			counter += 1
 		#tmp_img_2.show()
-labels_test = 
+
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "set")
 	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)

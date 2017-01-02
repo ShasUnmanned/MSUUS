@@ -85,11 +85,25 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	#	label = letter_list.index(letter)+14
 	#label = [0] * 729
 	#label[pair(shape_list.index(shape),letter_list.index(letter))] = 1
-	label = [shape_list.index(shape), letter_list.index(letter)]
+
+	#label = [shape_list.index(shape), letter_list.index(letter)]
+
+	#label = [0] * 338
+	#label[shape_list.index(shape) + (letter_list.index(letter) * 13)] = 1
+	
+	label = shape_list.index(shape) + (letter_list.index(letter) * 13)
+	#print(str(label))
 	
 	if (return_type == "target"):
 		return target(composite_path, letter, letter_color, shape, shape_color, image, label)
 	elif (return_type == "set"):
+		label = shape_list.index(shape) + (letter_list.index(letter) * 13)
+		return image, label
+	elif (return_type == "shape"):
+		label = shape_list.index(shape)		
+		return image, label
+	elif (return_type == "letter"):
+		label = letter_list.index(letter)		
 		return image, label
 
 
