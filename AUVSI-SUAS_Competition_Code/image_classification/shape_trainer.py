@@ -27,6 +27,7 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 
 counter = 0
+
 for i in range(0, 26):
 	for a in range(0, 13):
 		tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
@@ -46,16 +47,18 @@ for i in range(0, 26):
 			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
 			#labels[counter] = np.reshape(tmp_label, (-1))
 			#labels[counter] = tflearn.data_utils.to_categorical(tmp_label,338)
-			labels[counter] = tmp_label			
-			print(str(labels[counter]))
+			labels[counter] = np.zeros(13)
+			labels[counter][tmp_label] = 1
+			#print(str(labels[counter]))
 			ls_str = 'letter ' + letter_list[i]
 			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
 			counter += 1
-		#tmp_img_2.show()
+tmp_img_2.show()
+
 
 for i in range(0, num_testing_images):
-	tmp_img, tmp_label = target_gen.generate_image(return_type = "set")
+	tmp_img, tmp_label = target_gen.generate_image(return_type = "shape")
 	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
 	tmp_img = tmp_img.filter(ImageFilter.SMOOTH)
 	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
@@ -65,13 +68,14 @@ for i in range(0, num_testing_images):
 	images_test[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))
 	#labels_test[i] = tflearn.data_utils.to_categorical([tmp_label],338)
 	#labels_test[i] = np.reshape(tmp_label, (-1))
-	labels_test[i] = tmp_label
+	labels_test[i] = np.zeros(13)
+	labels_test[i][tmp_label] = 1
 	print("generating testing image " + str(i+1) + "/" + str(num_testing_images))
-#tmp_img.show()
+tmp_img.show()
 #np.reshape(labels, (338,338))
 #np.reshape(labels_test, (num_testing_images,338))
 
-print(labels)
+#print(labels)
 
 # shuffle images
 images, labels = shuffle(images, labels)
@@ -88,7 +92,7 @@ img_distortion = ImageAugmentation()
 # only flip left/right for shape training
 #img_distortion.add_random_flip_leftright()
 
-img_distortion.add_random_rotation(max_angle=360)
+img_distortion.add_random_rotation(max_angle=20)
 img_distortion.add_random_blur(sigma_max=1.)
 
 
@@ -123,7 +127,7 @@ network = fully_connected(network, 512, activation='relu')
 network = dropout(network, 0.5)
 
 # fully-connected final
-network = fully_connected(network, 338, activation='softmax')
+network = fully_connected(network, 13, activation='softmax')
 
 
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
