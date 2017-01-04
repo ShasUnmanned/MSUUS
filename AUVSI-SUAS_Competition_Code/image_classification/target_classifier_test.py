@@ -18,10 +18,7 @@ tmp_img = tmp_img.resize((64,64), Image.ANTIALIAS)
 enh_c = ImageEnhance.Contrast(tmp_img)
 tmp_img = enh_c.enhance(8.0)
 
-tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
-tmp_img = tmp_img.filter(ImageFilter.SMOOTH)
 tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
-tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
 tmp_img = tmp_img.convert('L')
 tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
 image = np.reshape(tmp_img.getdata(), (64, 64, -1))
@@ -50,9 +47,16 @@ network = regression(network, optimizer='adam', loss='categorical_crossentropy',
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
-model.load('msuus-target-classifier.tfl.ckpt-341')
+model.load('shape_classifier.tfl.ckpt-338')
 
 predicted_target_label = model.predict([image])
 
-print(predicted_target_label)
+
+letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Rectangle', 'Trapezoid', 'Pentagon', 'Hexagon', 'Heptagon', 'Octagon', 'Star', 'Cross']
+
+index = np.nonzero(predicted_target_label)[1][0]
+print("Predicted target shape is a " + shape_list[index])
+#print(index)
 
