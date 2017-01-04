@@ -34,7 +34,7 @@ for i in range(0, 26):
 			requested_shape=shape_list[a], 
 			requested_letter_color="White", 
 			requested_shape_color="Black", 
-			return_type = "shape")
+			return_type = "letter")
 		
 		for q in range(0, num_variations):
 			tmp_img_2 = tmp_img
@@ -47,7 +47,7 @@ for i in range(0, 26):
 			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
 			#labels[counter] = np.reshape(tmp_label, (-1))
 			#labels[counter] = tflearn.data_utils.to_categorical(tmp_label,338)
-			labels[counter] = np.zeros(13)
+			labels[counter] = np.zeros(26)
 			labels[counter][tmp_label] = 1
 			#print(str(labels[counter]))
 			ls_str = 'letter ' + letter_list[i]
@@ -58,7 +58,7 @@ tmp_img_2.show()
 
 
 for i in range(0, num_testing_images):
-	tmp_img, tmp_label = target_gen.generate_image(return_type = "shape")
+	tmp_img, tmp_label = target_gen.generate_image(return_type = "letter")
 	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
 	tmp_img = tmp_img.filter(ImageFilter.SMOOTH)
 	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
@@ -68,7 +68,7 @@ for i in range(0, num_testing_images):
 	images_test[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))
 	#labels_test[i] = tflearn.data_utils.to_categorical([tmp_label],338)
 	#labels_test[i] = np.reshape(tmp_label, (-1))
-	labels_test[i] = np.zeros(13)
+	labels_test[i] = np.zeros(26)
 	labels_test[i][tmp_label] = 1
 	print("generating testing image " + str(i+1) + "/" + str(num_testing_images))
 tmp_img.show()
@@ -127,19 +127,19 @@ network = fully_connected(network, 512, activation='relu')
 network = dropout(network, 0.5)
 
 # fully-connected final
-network = fully_connected(network, 13, activation='softmax')
+network = fully_connected(network, 26, activation='softmax')
 
 
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
 
 
-model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/shape_classifier.tfl.ckpt')
+model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/letter_classifier.tfl.ckpt')
 
 # if previously trained model is available use that
 #model.load('msuus-target-classifier.tfl')
 
-model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=32, snapshot_epoch=True, run_id='shape_classifier')
+model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=32, snapshot_epoch=True, run_id='letter_classifier')
 
-model.save("shape_classifier.tfl")
-print("Network trained and saved as shape_classifier.tfl")
+model.save("letter_classifier.tfl")
+print("Network trained and saved as letter_classifier.tfl")
 
