@@ -28,20 +28,17 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 counter = 0
 
-for i in range(0, 26):
-	for a in range(0, 13):
-		tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
-			requested_shape=shape_list[a], 
-			requested_letter_color="White", 
-			requested_shape_color="Black", 
-			return_type = "letter")
+for q in range(0, num_variations):
+	for i in range(0, 26):
+		for a in range(0, 13):
+			tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
+				requested_shape=shape_list[a], 
+				#requested_letter_color="White", 
+				#requested_shape_color="Black", 
+				return_type = "letter")
 		
-		for q in range(0, num_variations):
 			tmp_img_2 = tmp_img
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.FIND_EDGES)
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.SMOOTH)
 			tmp_img_2 = tmp_img_2.filter(ImageFilter.SMOOTH_MORE)
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.FIND_EDGES)
 			tmp_img_2 = tmp_img_2.convert('L')
 			tmp_img_2 = tmp_img_2.filter(ImageFilter.EDGE_ENHANCE_MORE)
 			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
@@ -54,15 +51,12 @@ for i in range(0, 26):
 			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
 			counter += 1
-tmp_img_2.show()
+#tmp_img_2.show()
 
 
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "letter")
-	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
-	tmp_img = tmp_img.filter(ImageFilter.SMOOTH)
 	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
-	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
 	tmp_img = tmp_img.convert('L')
 	tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
 	images_test[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))

@@ -12,7 +12,7 @@ from PIL import Image
 from PIL import ImageFilter
 # load dataset of auvsi targets
 # or generate them on demand here??
-num_variations = 1
+num_variations = 16
 num_training_images = int(26*13)*num_variations
 num_testing_images = 32*num_variations
 images = [None] * num_training_images
@@ -28,25 +28,21 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 counter = 0
 
-for i in range(0, 26):
-	for a in range(0, 13):
-		tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
-			requested_shape=shape_list[a], 
-			requested_letter_color="White", 
-			requested_shape_color="Black", 
-			return_type = "shape")
+for q in range(0, num_variations):
+	for i in range(0, 26):
+		for a in range(0, 13):
+			tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
+				requested_shape=shape_list[a], 
+				#requested_letter_color="White", 
+				#requested_shape_color="Black", 
+				return_type = "shape")
 		
-		for q in range(0, num_variations):
+			#for q in range(0, num_variations):
 			tmp_img_2 = tmp_img
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.FIND_EDGES)
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.SMOOTH)
 			tmp_img_2 = tmp_img_2.filter(ImageFilter.SMOOTH_MORE)
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.FIND_EDGES)
 			tmp_img_2 = tmp_img_2.convert('L')
 			tmp_img_2 = tmp_img_2.filter(ImageFilter.EDGE_ENHANCE_MORE)
 			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
-			#labels[counter] = np.reshape(tmp_label, (-1))
-			#labels[counter] = tflearn.data_utils.to_categorical(tmp_label,338)
 			labels[counter] = np.zeros(13)
 			labels[counter][tmp_label] = 1
 			#print(str(labels[counter]))
@@ -54,28 +50,20 @@ for i in range(0, 26):
 			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
 			counter += 1
-tmp_img_2.show()
+#tmp_img_2.show()
 
 
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "shape")
-	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
-	tmp_img = tmp_img.filter(ImageFilter.SMOOTH)
 	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
-	tmp_img = tmp_img.filter(ImageFilter.FIND_EDGES)
 	tmp_img = tmp_img.convert('L')
 	tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
 	images_test[i] = np.reshape(tmp_img.getdata(), (64, 64, -1))
-	#labels_test[i] = tflearn.data_utils.to_categorical([tmp_label],338)
-	#labels_test[i] = np.reshape(tmp_label, (-1))
 	labels_test[i] = np.zeros(13)
 	labels_test[i][tmp_label] = 1
 	print("generating testing image " + str(i+1) + "/" + str(num_testing_images))
-tmp_img.show()
-#np.reshape(labels, (338,338))
-#np.reshape(labels_test, (num_testing_images,338))
+	tmp_img.show()
 
-#print(labels)
 
 # shuffle images
 images, labels = shuffle(images, labels)
@@ -92,7 +80,7 @@ img_distortion = ImageAugmentation()
 # only flip left/right for shape training
 #img_distortion.add_random_flip_leftright()
 
-img_distortion.add_random_rotation(max_angle=20)
+img_distortion.add_random_rotation(max_angle=360)
 img_distortion.add_random_blur(sigma_max=1.)
 
 
