@@ -12,7 +12,7 @@ from PIL import Image
 from PIL import ImageFilter
 from PIL import ImageEnhance
 
-tmp_img = Image.open("test_image2.png")
+tmp_img = Image.open("test_image4.png")
 tmp_img = tmp_img.resize((64,64), Image.ANTIALIAS)
 
 enh_c = ImageEnhance.Contrast(tmp_img)
@@ -47,7 +47,7 @@ network = regression(network, optimizer='adam', loss='categorical_crossentropy',
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
-model.load('shape_classifier.tfl.ckpt-338')
+model.load('shape_classifier.tfl.ckpt-676')
 
 predicted_target_label = model.predict([image])
 
@@ -58,5 +58,6 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 index = np.nonzero(predicted_target_label)[1][0]
 print("Predicted target shape is a " + shape_list[index])
-#print(index)
+print(np.nonzero(predicted_target_label))
+print(predicted_target_label)
 
