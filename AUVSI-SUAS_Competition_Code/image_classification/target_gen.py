@@ -79,18 +79,6 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	#composite.save('composites/'+composite_path)
 	image = composite.convert("RGBA")
 	
-	#if (requested_label == 'shape'):
-	#	label = shape_list.index(shape)
-	#elif (requested_label == 'letter'):
-	#	label = letter_list.index(letter)+14
-	#label = [0] * 729
-	#label[pair(shape_list.index(shape),letter_list.index(letter))] = 1
-
-	#label = [shape_list.index(shape), letter_list.index(letter)]
-
-	#label = [0] * 338
-	#label[shape_list.index(shape) + (letter_list.index(letter) * 13)] = 1
-	
 	label = shape_list.index(shape) + (letter_list.index(letter) * 13)
 	#print(str(label))
 	
