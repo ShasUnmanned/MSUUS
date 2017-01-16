@@ -8,6 +8,7 @@ from Tkinter import *
 def main():
 	telemetry_open = False
 	client = interop.Client(url='http://127.0.0.1:8000', username='testuser', password='testpass')
+	sys_db = database.db_connectt(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 	dataRate = 0
 
 	def upload_telemetry(client, out):
@@ -23,26 +24,20 @@ def main():
 		# this is all boilerplate right now, we need to send target info as json
 		# or extract the json info and send it this way.
 		try:
-                        #create a target object. we will be building this objec$
+                        #create a target object. we will be building this object
                         #the output of our image classification program, from v$
                         #stored in our database.
                         targets, confidence = sys_db.get_all_targets()
 			target_count = 0
+			confirmed_targets = []
 			for i in range(0,len(targets)):
 				if confidence[i] > 90:
+					confirmed_targets.append(targets[i])
 
-			
-			interop.Target(type='standard',
-                                                latitude=38.145215,
-                                                longitude=-76.427942,
-                                                orientation='n',
-                                                shape='square',
-                                                background_color='green',
-                                                alphanumeric='A',
-                                                alphanumeric_color='white')
+
                         #send the target info to the interop server
-                        target = client.post_target(target)
-                        out.insert(END, client.get_targets())
+			for i in range(0,confirmed_targets):
+                        	client.post_target(confirmed_targets[i])
 		except:
 			out.insert(END, 'Something went wrong when uploading target\n')
 
