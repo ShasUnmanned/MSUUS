@@ -6,10 +6,22 @@ from Tkinter import *
 
 
 def main():
+
+	############################################################
+	###################### INITIALIZATION ######################
+	############################################################
+
 	telemetry_open = False
 	client = interop.Client(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 	sys_db = database.db_connectt(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 	dataRate = 0
+
+
+
+
+	############################################################
+	###################### API DEFINITONS ######################
+	############################################################
 
 	def upload_telemetry(client, out):
                 telemetry = interop.Telemetry(latitude=38.145215,
@@ -20,7 +32,7 @@ def main():
                 client.post_telemetry(telemetry)
 		out.insert(END,"Telemetry posted\n")
 
-	def upload_all_targets(client, target_json, out):
+	def upload_all_targets(client, target_json, sys_db, out):
 		# this is all boilerplate right now, we need to send target info as json
 		# or extract the json info and send it this way.
 		try:
@@ -41,7 +53,10 @@ def main():
 		except:
 			out.insert(END, 'Something went wrong when uploading target\n')
 
-	def upload_mission(client, mission_json, out):
+	def view_current_targets(sys_db, out):
+		#do that
+
+	def upload_mission(client, mission_json, sys_db, out):
 		# this is all boilerplate right now, we need to send mission info as json
 		# or extract the json info and send it this way.
 		try:
@@ -55,9 +70,8 @@ def main():
 		except:
 			out.insert(END, 'Something went wrong when uploading mission\n')
 
-	def get_current_targets(client, out):
-        	out.insert(END, client.get_targets())
-
+	def view_mission(sys_db, out):
+		#do that
 
 	def connect(url, username, password, out):
 		try:
@@ -68,7 +82,14 @@ def main():
 			                        password=password)
 			out.insert(END, "Connected to " + url + " with username '" + username + "' and password '" + password + "'.\n")
 		except:
-			out.insert(END, "Something when wrong when trying to connect\n")	
+			out.insert(END, "Something when wrong when trying to connect\n")
+	
+
+
+
+	############################################################
+	###################### WINDOW SETUP ########################
+	############################################################
 
 	window = Tkinter.Tk()
 	window.title("MSUUS")
