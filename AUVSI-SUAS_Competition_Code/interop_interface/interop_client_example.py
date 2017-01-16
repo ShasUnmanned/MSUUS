@@ -19,14 +19,20 @@ def main():
                 client.post_telemetry(telemetry)
 		out.insert(END,"Telemetry posted\n")
 
-	def upload_target(client, target_json, out):
+	def upload_all_targets(client, target_json, out):
 		# this is all boilerplate right now, we need to send target info as json
 		# or extract the json info and send it this way.
 		try:
                         #create a target object. we will be building this objec$
                         #the output of our image classification program, from v$
                         #stored in our database.
-                        target = interop.Target(type='standard',
+                        targets, confidence = sys_db.get_all_targets()
+			target_count = 0
+			for i in range(0,len(targets)):
+				if confidence[i] > 90:
+
+			
+			interop.Target(type='standard',
                                                 latitude=38.145215,
                                                 longitude=-76.427942,
                                                 orientation='n',
@@ -39,6 +45,23 @@ def main():
                         out.insert(END, client.get_targets())
 		except:
 			out.insert(END, 'Something went wrong when uploading target\n')
+
+	def upload_mission(client, mission_json, out):
+		# this is all boilerplate right now, we need to send mission info as json
+		# or extract the json info and send it this way.
+		try:
+                        #create a target object. we will be building this objec$
+                        #the output of our image classification program, from v$
+                        #stored in our database.
+                        mission = interop.Mission()
+                        #send the mission info to the interop server
+                        mission = client.post_target(mission)
+                        out.insert(END, "Mission posted\n")
+		except:
+			out.insert(END, 'Something went wrong when uploading mission\n')
+
+	def get_current_targets(client, out):
+        	out.insert(END, client.get_targets())
 
 
 	def connect(url, username, password, out):

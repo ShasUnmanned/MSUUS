@@ -1,6 +1,7 @@
 import tflearn
 import numpy as np
 from tflearn.data_utils import shuffle
+from tflearn.data_utils import *
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
 from tflearn.layers.estimator import regression
@@ -12,7 +13,7 @@ from PIL import Image
 from PIL import ImageFilter
 # load dataset of auvsi targets
 # or generate them on demand here??
-num_variations = 16
+num_variations = 2
 num_training_images = int(26*13)*num_variations
 num_testing_images = 32*num_variations
 images = [None] * num_training_images
@@ -27,7 +28,7 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 
 counter = 0
-
+'''
 for q in range(0, num_variations):
 	for i in range(0, 26):
 		for a in range(0, 13):
@@ -50,8 +51,28 @@ for q in range(0, num_variations):
 			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
 
 			counter += 1
-#tmp_img_2.show()
+			#if (q == 0 and i == 0):
+			#	tmp_img_2.show()
+'''
 
+# load images
+dataset_file = 'composites/'
+x, labels = image_preloader(dataset_file, image_shape=(64, 64), mode='folder', categorical_labels=True, normalize=True)
+print(len(x))
+images = [None] * len(x)
+for i in range(0, len(x)):
+	images[i] = np.uint8(x[i]) 
+	images[i] = Image.fromarray(images[i])
+	images[i] = images[i].filter(ImageFilter.SMOOTH_MORE)
+	images[i] = images[i].convert('L')
+	images[i] = images[i].filter(ImageFilter.EDGE_ENHANCE_MORE)
+	images[i] = np.reshape(images[i].getdata(), (64, 64, -1))
+print(len(images))
+print(len(labels))
+print(labels[0])
+print(labels[1])
+print(labels[10])
+print(labels[100])
 
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "shape")
@@ -62,7 +83,7 @@ for i in range(0, num_testing_images):
 	labels_test[i] = np.zeros(13)
 	labels_test[i][tmp_label] = 1
 	print("generating testing image " + str(i+1) + "/" + str(num_testing_images))
-	tmp_img.show()
+	#tmp_img.show()
 
 
 # shuffle images
@@ -94,22 +115,22 @@ network = input_data(shape=[None, 64, 64, 1],
 	data_augmentation=img_distortion)
 
 # convolution 
-network = conv_2d(network, 64, 4, activation='relu')
+network = conv_2d(network, 96, 2, activation='relu')
 
 # max pooling
 network = max_pool_2d(network, 2)
 
 # convolution 2
-network = conv_2d(network, 96, 4, activation='relu')
+network = conv_2d(network, 64, 2, activation='relu')
 
 # convolution 3
-network = conv_2d(network, 128, 4, activation='relu')
+network = conv_2d(network, 64, 4, activation='relu')
 
 # max pooling 2
 network = max_pool_2d(network, 2)
 
 # fully-connected
-network = fully_connected(network, 512, activation='relu')
+network = fully_connected(network, 384, activation='relu')
 
 # dropout
 network = dropout(network, 0.5)
