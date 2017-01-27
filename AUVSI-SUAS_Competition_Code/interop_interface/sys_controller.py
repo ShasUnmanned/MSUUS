@@ -2,6 +2,7 @@ import interop
 import sys
 import re
 import Tkinter
+import UAV
 from Tkinter import *
 
 
@@ -94,6 +95,7 @@ def main():
 			out.insert(END, "Connected to " + url + " with username '" + username + "' and password '" + password + "'.\n")
 		except:
 			out.insert(END, "Something when wrong when trying to connect\n")
+
 	
 
 	############################################################
