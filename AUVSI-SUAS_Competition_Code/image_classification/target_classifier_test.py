@@ -56,15 +56,16 @@ network = conv_2d(network, 16, 5, activation='relu')
 
 network = max_pool_2d(network, 2)
 network = fully_connected(network, 128, activation='relu')
+network = fully_connected(network, 128, activation='relu')
 network = dropout(network, 0.5)
 network = fully_connected(network, 13, activation='softmax')
-network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0005)
 
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
 #model = tflearn.helpers.evaluator.Evaluator(network,model='shape_classifier.tfl')
-model.load('shape_classifier.tfl.ckpt-8030')
+model.load('shape_classifier.tfl')
 
 predicted_target_label = model.predict([image])
 
@@ -75,5 +76,5 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 index = np.argmax(predicted_target_label)
 print("Predicted target shape is a " + shape_list[index])
-print(np.round(predicted_target_label))
+#print(np.round(predicted_target_label))
 

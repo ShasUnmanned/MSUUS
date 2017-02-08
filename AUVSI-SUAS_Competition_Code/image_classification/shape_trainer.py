@@ -146,6 +146,8 @@ network = conv_2d(network, 16, 5, activation='relu')
 network = max_pool_2d(network, 2)
 # fully-connected
 network = fully_connected(network,128, activation='relu')
+# fully-connected
+network = fully_connected(network,128, activation='relu')
 
 # dropout
 network = dropout(network, 0.5)
@@ -162,7 +164,7 @@ model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salv
 # if previously trained model is available use that
 model.load('shape_classifier.tfl')
 
-model.fit(images, labels, n_epoch=50, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='shape_classifier')
+model.fit(images, labels, n_epoch=50, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=128, snapshot_epoch=True, run_id='shape_classifier')
 
 model.save("shape_classifier.tfl")
 print("Network trained and saved as shape_classifier.tfl")
