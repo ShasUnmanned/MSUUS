@@ -4,6 +4,7 @@ from PIL import ImageFont
 from PIL import ImageFilter
 import random
 import webcolors
+import math
 
 class target():
 	def __init__(self, path, letter, letter_color, shape, shape_color, image, label):
@@ -61,22 +62,35 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	else:
 		shape_color = requested_shape_color
 
-	background_path = 'Grass.png'
+	background_path = 'Grass'+str(random.randint(1,7))+'.png'
 	letter_path = letter + '.png'
 	shape_path = 'shapes/' + shape + '.png'
 	composite_path = letter_color + "_" + letter + "_" + shape_color + "_" + shape + ".png"
 
 	composite = Image.open(background_path)
 	shape_temp = Image.open(shape_path)
+	
 	composite.paste(replace_color(shape_path, shape_color), (64,64), shape_temp)
 	temp = ImageDraw.Draw(composite)
-	font = ImageFont.truetype("LiberationMono-Bold.ttf", 64)
+	font = ImageFont.truetype("LiberationMono-Bold.ttf", 62)
 	W, H = 256, 256
 	w, h = temp.textsize(letter)
 	temp.text((108, 99),letter,letter_color,font=font)
+
 	composite = composite.filter(ImageFilter.EDGE_ENHANCE)
-	composite = composite.resize((64,64), Image.ANTIALIAS)
-	composite.save('composites/'+str(shape_index)+'_'+shape+'/'+composite_path)
+	composite = composite.rotate(random.randint(0,359))
+	scalex = random.randint(-5,5)
+	scaley = random.randint(-5,5) 
+	scale = random.randint(-27,27) 
+	composite = composite.resize((256+scalex+scale,256+scaley+scale), Image.ANTIALIAS)
+	composite = composite.crop((32+math.floor(scalex+scale), 32+math.floor(scaley+scale), 224+math.floor(scalex+scale), 224+math.floor(scaley+scale)))
+	composite = composite.resize((80,80), Image.ANTIALIAS)
+	randx = random.randint(4,12)
+	randy = random.randint(4,12) 
+	composite = composite.crop((randx, randy, randx+64, randy+64))
+
+	composite.save('composites/'+letter_list[shape_index].lower()+'/'+composite_path)
+
 	image = composite.convert("RGBA")
 	
 	label = shape_list.index(shape) + (letter_list.index(letter) * 13)
