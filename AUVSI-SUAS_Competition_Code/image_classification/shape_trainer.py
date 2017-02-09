@@ -12,6 +12,7 @@ import target_gen
 from PIL import Image
 from PIL import ImageEnhance
 from PIL import ImageFilter
+import sys
 np.set_printoptions(threshold=np.inf)
 # load dataset of auvsi targets
 # or generate them on demand here??
@@ -58,7 +59,7 @@ for q in range(0, num_variations):
 '''
 
 # load images
-dataset_file = 'composites/'
+dataset_file = 'composites/shapes/'
 
 print("loading image dataset")
 x, labels = image_preloader(dataset_file, image_shape=(64, 64), mode='folder', categorical_labels=True, normalize=False)
@@ -84,7 +85,6 @@ for i in range(0, len(x)):
 	#images[i] = np.reshape(tmp_arr, (64, 64, -1))
 
 
-print("generating " + str(num_testing_images) + " testing images")
 for i in range(0, num_testing_images):
 	tmp_img, tmp_label = target_gen.generate_image(return_type = "shape")
 	tmp_img = tmp_img.convert('L')
@@ -101,6 +101,10 @@ for i in range(0, num_testing_images):
 	images_test[i] = tmp_arr.reshape(64,64,1)
 	labels_test[i] = np.zeros(13)
 	labels_test[i][tmp_label] = 1.
+	sys.stdout.write("Generating image %d/%d	 \r" % (i, num_testing_images) )
+	sys.stdout.flush()
+sys.stdout.write("Generating image %d/%d \n" % (i+1, num_testing_images) )
+sys.stdout.write("Finished generating images\n")
 
 # shuffle images
 print("shuffling images")
@@ -118,8 +122,8 @@ print("adding distortion")
 img_distortion = ImageAugmentation()
 
 # only flip left/right for shape training
-#img_distortion.add_random_flip_leftright()
-#img_distortion.add_random_blur(sigma_max=1.)
+img_distortion.add_random_flip_leftright()
+img_distortion.add_random_blur(sigma_max=1.)
 
 
 
