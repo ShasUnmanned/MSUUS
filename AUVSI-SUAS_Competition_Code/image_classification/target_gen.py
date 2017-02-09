@@ -62,7 +62,7 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	else:
 		shape_color = requested_shape_color
 
-	background_path = 'Grass'+str(random.randint(1,7))+'.png'
+	background_path = 'grass_images/Grass'+str(random.randint(1,7))+'.png'
 	letter_path = letter + '.png'
 	shape_path = 'shapes/' + shape + '.png'
 	composite_path = letter_color + "_" + letter + "_" + shape_color + "_" + shape + ".png"
