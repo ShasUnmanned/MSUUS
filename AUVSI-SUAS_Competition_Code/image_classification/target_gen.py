@@ -17,7 +17,6 @@ class target():
 		self.image = image
 
 def replace_color(image_path, color):
-	orig_color = "Black"
 	img = Image.open(image_path).convert('RGB')
 	pixdata = img.load()
 	for y in range(img.size[1]):
@@ -27,8 +26,6 @@ def replace_color(image_path, color):
 	
 	return img
 
-def pair(k1, k2):
-	return ((k1 + k2)*(k1 + k2 + 1))/2 + k2
 
 def generate_image(requested_letter = None, requested_shape = None, requested_letter_color = None, requested_shape_color = None, requested_label = None, return_type = "target"):	
 	letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -61,9 +58,9 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 		shape_color = color_list[shape_color_temp]
 	else:
 		shape_color = requested_shape_color
-
+	
+	
 	background_path = 'grass_images/Grass'+str(random.randint(1,7))+'.png'
-	letter_path = letter + '.png'
 	shape_path = 'shapes/' + shape + '.png'
 	composite_path = letter_color + "_" + letter + "_" + shape_color + "_" + shape + ".png"
 
@@ -93,14 +90,10 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 
 	image = composite.convert("RGBA")
 	
-	label = shape_list.index(shape) + (letter_list.index(letter) * 13)
-	#print(str(label))
-	
 	if (return_type == "target"):
 		return target(composite_path, letter, letter_color, shape, shape_color, image, label)
 	elif (return_type == "set"):
-		label = shape_list.index(shape) + (letter_list.index(letter) * 13)
-		return image, label
+		return image
 	elif (return_type == "shape"):
 		label = shape_list.index(shape)		
 		return image, label
