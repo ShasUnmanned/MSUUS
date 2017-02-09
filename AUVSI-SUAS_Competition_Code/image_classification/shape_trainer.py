@@ -156,7 +156,7 @@ network = dropout(network, 0.5)
 network = fully_connected(network, 13, activation='softmax')
 
 
-network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0005)
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0001)
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/shape_classifier.tfl.ckpt')
