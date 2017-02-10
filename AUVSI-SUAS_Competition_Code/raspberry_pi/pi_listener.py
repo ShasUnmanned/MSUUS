@@ -75,12 +75,15 @@ def bottle_release():
 @app.route('/restart_listener')
 def restart_listener():
 	print('pi listener is restarting')
+	'''
 	executable = sys.executable
 	args = sys.argv[:]
 	args.insert(0, sys.executable)
 
 	time.sleep(1)
 	os.execvp(executable, args)
+	'''
+	subprocess.call(['python pi_listener.py'])
 	exit()
 
 
