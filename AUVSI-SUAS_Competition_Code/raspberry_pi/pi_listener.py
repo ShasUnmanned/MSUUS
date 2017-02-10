@@ -84,6 +84,7 @@ def restart_listener():
 	os.execvp(executable, args)
 	'''
 	subprocess.call(['python pi_listener.py'])
+	time.sleep(1)
 	exit()
 
 
