@@ -86,7 +86,12 @@ def restart_listener():
 	subprocess.call(['python pi_listener.py'])
 	time.sleep(1)
 	exit()
+	print('did it make it here?')
 
+@app.route('/stop_listener')
+def stop_listener():
+	print('pi listener is stopping')
+	exit()
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5000)
