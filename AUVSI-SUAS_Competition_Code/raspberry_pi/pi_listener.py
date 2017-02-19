@@ -20,6 +20,7 @@ app = Flask(__name__)
 camera = picamera.PiCamera()
 camera.resolution = (3280, 2464)
 cap_count = 0
+Acap_count = 0
  
 @app.route('/')
 def hello_world():
@@ -62,6 +63,23 @@ def take_picture():
 		"image": encoded_image,
 		})
 
+@app.route('/start_autopicture', methods=['POST'])
+def start_autopicture():
+	global autopic
+	autopic = True
+	return Flask.jsonify( {
+		"status": "ok",
+		})
+
+@app.route('/stop_autopicture', methods=['POST'])
+def start_autopicture():
+	global autopic
+	autopic = False
+	return Flask.jsonify( {
+		"status": "ok",
+		})
+
+
 @app.route('/bottle_release')
 def bottle_release():
 	######################################
@@ -92,6 +110,16 @@ def restart_listener():
 def stop_listener():
 	print('pi listener is stopping')
 	exit()
+
+
+def take_autopicture():
+	global Acap_count, camera
+	Acap_count += 1
+	sleep(2)
+	filename = 'autopic/test_capture_'+str(cap_count-1)+'.jpg'
+	camera.capture(filename)
+	
+
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5000)
