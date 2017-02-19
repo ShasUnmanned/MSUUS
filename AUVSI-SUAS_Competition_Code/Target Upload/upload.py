@@ -49,7 +49,7 @@ imagedir = raw_input('Input Directory storing images: ')
 
 
 #Connect to the mySQL database
-db = MySQLdb.connect(host = "localhost", user="root", passwd = "abolishmacaroni", db ="testdb")
+db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
 #Use own credentials for actual database
 
 cur = db.cursor() #allows execution of all SQL queries
