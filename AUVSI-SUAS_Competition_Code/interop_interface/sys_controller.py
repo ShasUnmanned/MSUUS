@@ -2,7 +2,7 @@ import interop
 import sys
 import re
 import Tkinter
-import UAV
+#import UAV
 import MySQLdb
 
 from Tkinter import *
@@ -16,7 +16,6 @@ def main():
 
 	telemetry_open = False
 	client = interop.Client(url='http://127.0.0.1:8000', username='testuser', password='testpass')
-	sys_db = database.db_connectt(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 
 	# need to add drone connection here
 	#drone = UAV.connect(url='http://127.0.0.1:8000', username='testuser', password='testpass')
@@ -98,6 +97,7 @@ def main():
 
 
 	def view_current_targets(sys_db, out):
+		return 0
 		#do that
 
 	def upload_mission(client, mission_json, sys_db, out):
@@ -112,6 +112,7 @@ def main():
 			out.insert(END, 'Something went wrong when uploading mission\n')
 
 	def view_mission(sys_db, out):
+		return 0
 		#do that
 
 	def bottle_drop(drone, out):
@@ -122,12 +123,15 @@ def main():
                         out.insert(END, "Error sending bottle drop signal\n")
 
 	def get_drone_info(drone, out):
+		return 0
 		#do that
 
 	def drone_start_video(drone, out):
+		return 0
 		#do that
 
 	def drone_take_picture(drone, out):
+		return 0
 		#do that
 
 	def connect(url, username, password, out):
@@ -199,3 +203,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+	db.close()
