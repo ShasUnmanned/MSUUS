@@ -3,6 +3,8 @@ import sys
 import re
 import Tkinter
 import UAV
+import MySQLdb
+
 from Tkinter import *
 
 
@@ -15,8 +17,20 @@ def main():
 	telemetry_open = False
 	client = interop.Client(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 	sys_db = database.db_connectt(url='http://127.0.0.1:8000', username='testuser', password='testpass')
-	drone = UAV.connect(url='http://127.0.0.1:8000', username='testuser', password='testpass')
-	dataRate = 0
+
+	# need to add drone connection here
+	#drone = UAV.connect(url='http://127.0.0.1:8000', username='testuser', password='testpass')
+
+	dataRate = 0 # to store avg datarate
+
+	imagedir = raw_input('Input Directory storing images: ')
+
+	#Connect to the mySQL database
+	db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
+	#Use own credentials for actual database
+
+
+
 
 	############################################################
 	###################### API DEFINITONS ######################
@@ -34,6 +48,34 @@ def main():
 	def upload_all_targets(client, target_json, sys_db, out):
 		# this is all boilerplate right now, we need to send target info as json
 		# or extract the json info and send it this way.
+
+		
+		cur = db.cursor() #allows execution of all SQL queries
+		cur.execute("SELECT * FROM targets")
+
+		#Fetches every row of the table; 
+		#Columns are as follows:
+		#1st - target_id, 2 - type, 3 - latitude, 4 - longitude, 5 - orientation, 6 - shape, 7 - background-color, 8 - alphanumeric, 9 - alphanumeric_color
+		#note: target_id is a long/int, and latitude and longitude are floats/doubles
+		for row in cur.fetchall():
+			target = interop.Target(type = row[1], #indexing starts from 0, data doesn't include target_id
+						latitude = row[2],
+						longitude = row[3],
+						orientation = row[4],
+						shape = row[5],
+						background_color = row[6],
+						alphanumeric = row[7],
+						alphanumeric_color = row[8])
+
+			target = client.post_target(target) #send target values to server
+	
+			#open corresponding image file.  Assumes the naming convention goes "1_lettercolor_letter_shapecolor_shape.png".  Ex. "2_white_B_green_square.png"
+			with open(imagedir + "/" + str(row[0]) + '_' + row[8] + '_' + row[7] + '_' + row[6] + '_' + row[5] + '.png', 'rb') as f:
+			#the 'rb' option reads the file in binary, as opposed to as a text file
+				image_data = f.read()
+		    		client.put_target_image(target.id, image_data)
+
+		''' OLD CODE
 		try:
                         #create a target object. we will be building this object
                         #the output of our image classification program, from v$
@@ -51,6 +93,8 @@ def main():
                         	client.post_target(confirmed_targets[i])
 		except:
 			out.insert(END, 'Something went wrong when uploading target\n')
+		'''
+
 
 	def view_current_targets(sys_db, out):
 		#do that

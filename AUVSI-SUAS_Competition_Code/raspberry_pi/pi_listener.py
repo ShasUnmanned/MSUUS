@@ -21,6 +21,7 @@ camera = picamera.PiCamera()
 camera.resolution = (3280, 2464)
 cap_count = 0
 Acap_count = 0
+autopic = False
  
 @app.route('/')
 def hello_world():
