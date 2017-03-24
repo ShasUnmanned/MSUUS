@@ -23,7 +23,7 @@ def main():
 
 	dataRate = 0 # to store avg datarate
 
-	imagedir = raw_input('Input Directory storing images: ')
+	imagedir = 'target_images'
 
 	#Connect to the mySQL database
 	db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
@@ -56,6 +56,7 @@ def main():
 		#Fetches every row of the table; 
 		#Columns are as follows:
 		#1st - target_id, 2 - type, 3 - latitude, 4 - longitude, 5 - orientation, 6 - shape, 7 - background-color, 8 - alphanumeric, 9 - alphanumeric_color
+		# 10 - image path
 		#note: target_id is a long/int, and latitude and longitude are floats/doubles
 		for row in cur.fetchall():
 			target = interop.Target(type = row[1], #indexing starts from 0, data doesn't include target_id
@@ -70,12 +71,12 @@ def main():
 			target = client.post_target(target) #send target values to server
 	
 			#open corresponding image file.  Assumes the naming convention goes "1_lettercolor_letter_shapecolor_shape.png".  Ex. "2_white_B_green_square.png"
-			with open(imagedir + "/" + str(row[0]) + '_' + row[8] + '_' + row[7] + '_' + row[6] + '_' + row[5] + '.png', 'rb') as f:
+			with open(imagedir + "/" + row[10] + '.png', 'rb') as f:
 			#the 'rb' option reads the file in binary, as opposed to as a text file
 				image_data = f.read()
 		    		client.put_target_image(target.id, image_data)
 
-		''' OLD CODE
+		''' OLD CODE 
 		try:
                         #create a target object. we will be building this object
                         #the output of our image classification program, from v$
