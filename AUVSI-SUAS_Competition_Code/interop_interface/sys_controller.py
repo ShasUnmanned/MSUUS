@@ -150,55 +150,65 @@ def main():
 	############################################################
 	###################### WINDOW SETUP ########################
 	############################################################
+	def window_setup():
+		window.title("MSUUS")
+		window.geometry("590x560")
 
+		url = StringVar( window )
+		url.set('http://127.0.0.1:8000')
+		username = StringVar( window )
+		username.set('testuser')
+		password = StringVar( window )
+		password.set('testpass')
+	
+		url_label = Label( window, text="Server URL")
+		url_label.place(x=10,y=10)
+		url_textbox = Entry( window, textvariable=url )
+		url_textbox.place(x=100, y=10)
+
+		username_label = Label( window, text="Username:")
+		username_label.place(x=10, y=30)
+		username_textbox = Entry( window, textvariable=username )
+		username_textbox.place(x=100, y=30)
+
+		password_label = Label( window, text="Password:")
+		password_label.place(x=10, y=50)
+		password_textbox = Entry( window, textvariable=password )
+		password_textbox.place(x=100, y=50)
+
+		output_label = Label( window, text="Output" )
+		output_label.place(x=10, y=190)
+		output_textbox = Text( window, width=79, wrap=WORD )
+		output_textbox.place(x=10, y=210)
+		output_scrollbar = Scrollbar( window, command=output_textbox.yview )
+		output_textbox['yscrollcommand'] = output_scrollbar.set
+		output_scrollbar.place(x=570,y=210,height=340)
+	
+		data_rate_label = Label( window, text="Telemetry Data Rate:" )
+		data_rate_label.place(x=290, y=10)
+		data_rate_field = Entry( window, textvariable=dataRate )
+		data_rate_field.place(x=430, y=10, width=40)
+
+		connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
+		connect_button.place(x=10, y=90)
+
+		target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, "{'id':1}",output_textbox) )
+		target_upload_button.place(x=10, y=150)
+	
+
+		#window.after(500, lambda: upload_telemetry(client,output_textbox))	
+	
+
+	def control_loop():
+		window.update_idletasks()
+		window.update()
+
+	### START ###
 	window = Tkinter.Tk()
-	window.title("MSUUS")
-	window.geometry("590x560")
+	window_setup()
 
-        url = StringVar( window )
-        url.set('http://127.0.0.1:8000')
-        username = StringVar( window )
-        username.set('testuser')
-        password = StringVar( window )
-        password.set('testpass')
-	
-	url_label = Label( window, text="Server URL")
-	url_label.place(x=10,y=10)
-	url_textbox = Entry( window, textvariable=url )
-	url_textbox.place(x=100, y=10)
-
-	username_label = Label( window, text="Username:")
-	username_label.place(x=10, y=30)
-	username_textbox = Entry( window, textvariable=username )
-	username_textbox.place(x=100, y=30)
-
-	password_label = Label( window, text="Password:")
-	password_label.place(x=10, y=50)
-	password_textbox = Entry( window, textvariable=password )
-	password_textbox.place(x=100, y=50)
-
-	output_label = Label( window, text="Output" )
-	output_label.place(x=10, y=190)
-	output_textbox = Text( window, width=79, wrap=WORD )
-	output_textbox.place(x=10, y=210)
-	output_scrollbar = Scrollbar( window, command=output_textbox.yview )
-	output_textbox['yscrollcommand'] = output_scrollbar.set
-	output_scrollbar.place(x=570,y=210,height=340)
-	
-	data_rate_label = Label( window, text="Telemetry Data Rate:" )
-	data_rate_label.place(x=290, y=10)
-	data_rate_field = Entry( window, textvariable=dataRate )
-	data_rate_field.place(x=430, y=10, width=40)
-
-	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
-	connect_button.place(x=10, y=90)
-
-	target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, "{'id':1}",output_textbox) )
-	target_upload_button.place(x=10, y=150)
-	
-
-	window.after(500, lambda: upload_telemetry(client,output_textbox))	
-	window.mainloop()
+	while True:
+		control_loop()
 
 
 if __name__ == "__main__":
