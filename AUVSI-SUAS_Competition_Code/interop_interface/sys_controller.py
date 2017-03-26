@@ -3,6 +3,7 @@ import sys
 import re
 import Tkinter
 #import UAV
+import datetime
 import MySQLdb
 
 from Tkinter import *
@@ -15,14 +16,15 @@ def main():
 	###################### API DEFINITONS ######################
 	############################################################
 
-	def upload_telemetry(client, out):
+	def upload_telemetry(client, last_telem, out):
                 telemetry = interop.Telemetry(latitude=38.145215,
 			longitude=-76.427942,
 			altitude_msl=50,
 			uas_heading=90)
                 #send that info to the interop server
+		delta = datetime.datetime.now() - last_telem
+		out.set(delta.total_seconds() * 1000)
                 client.post_telemetry(telemetry)
-		out.insert(END,"Telemetry posted\n")
 
 	def upload_all_targets(client, target_json, sys_db, out):
 		# this is all boilerplate right now, we need to send target info as json
@@ -139,7 +141,8 @@ def main():
 	# need to add drone connection here
 	#drone = UAV.connect(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 
-	dataRate = 0 # to store avg datarate
+	datarate = 0 # to store avg datarate
+	last_telem = datetime.datetime.now()
 
 	imagedir = 'target_images'
 
@@ -161,6 +164,7 @@ def main():
 	username.set('testuser')
 	password = StringVar( window )
 	password.set('testpass')
+	
 
 	url_label = Label( window, text="Server URL")
 	url_label.place(x=10,y=10)
@@ -185,10 +189,12 @@ def main():
 	output_textbox['yscrollcommand'] = output_scrollbar.set
 	output_scrollbar.place(x=570,y=210,height=340)
 
+	data_rate_str = StringVar( window )
+	data_rate_str.set('0')
 	data_rate_label = Label( window, text="Telemetry Data Rate:" )
 	data_rate_label.place(x=290, y=10)
-	data_rate_field = Entry( window, textvariable=dataRate )
-	data_rate_field.place(x=430, y=10, width=40)
+	data_rate_field = Entry( window, textvariable=data_rate_str )
+	data_rate_field.place(x=430, y=10, width=60)
 
 	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
 	connect_button.place(x=10, y=90)
@@ -197,10 +203,9 @@ def main():
 	target_upload_button.place(x=10, y=150)
 
 
-	#window.after(500, lambda: upload_telemetry(client,output_textbox))
-
 	while True:
-		upload_telemetry(client, output_textbox)
+		upload_telemetry(client, last_telem, data_rate_str)
+		last_telem = datetime.datetime.now()
 		window.update_idletasks()
 		window.update()
 	
