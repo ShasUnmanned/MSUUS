@@ -93,7 +93,7 @@ def main():
 		except:
 			out.insert(END, 'Something went wrong when uploading mission\n')
 
-	def view_mission(sys_db, out):
+	def download_obstacles(client, sys_db, out):
 		return 0
 		#do that
 
