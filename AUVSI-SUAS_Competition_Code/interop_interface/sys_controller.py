@@ -1,12 +1,12 @@
 import interop
 import sys
 import re
-import Tkinter
+import tkinter
 #import UAV
 import datetime
 import MySQLdb
 
-from Tkinter import *
+from tkinter import *
 
 
 def main():
@@ -17,14 +17,14 @@ def main():
 	############################################################
 
 	def upload_telemetry(client, last_telem, out):
-                telemetry = interop.Telemetry(latitude=38.145215,
+		telemetry = interop.Telemetry(latitude=38.145215,
 			longitude=-76.427942,
 			altitude_msl=50,
 			uas_heading=90)
-                #send that info to the interop server
+		#send that info to the interop server
 		delta = datetime.datetime.now() - last_telem
 		out.set(delta.total_seconds() * 1000)
-                client.post_telemetry(telemetry)
+		client.post_telemetry(telemetry)
 
 	def upload_all_targets(client, target_json, sys_db, out):
 		# this is all boilerplate right now, we need to send target info as json
@@ -41,21 +41,21 @@ def main():
 		#note: target_id is a long/int, and latitude and longitude are floats/doubles
 		for row in cur.fetchall():
 			target = interop.Target(type = row[1], #indexing starts from 0, data doesn't include target_id
-						latitude = row[2],
-						longitude = row[3],
-						orientation = row[4],
-						shape = row[5],
-						background_color = row[6],
-						alphanumeric = row[7],
-						alphanumeric_color = row[8])
+				latitude = row[2],
+				longitude = row[3],
+				orientation = row[4],
+				shape = row[5],
+				background_color = row[6],
+				alphanumeric = row[7],
+				alphanumeric_color = row[8])
 
 			target = client.post_target(target) #send target values to server
 	
 			#open corresponding image file.  Assumes the naming convention goes "1_lettercolor_letter_shapecolor_shape.png".  Ex. "2_white_B_green_square.png"
 			with open(imagedir + "/" + row[10] + '.png', 'rb') as f:
-			#the 'rb' option reads the file in binary, as opposed to as a text file
+				#the 'rb' option reads the file in binary, as opposed to as a text file
 				image_data = f.read()
-		    		client.put_target_image(target.id, image_data)
+				client.put_target_image(target.id, image_data)
 
 		''' OLD CODE 
 		try:
@@ -82,16 +82,13 @@ def main():
 		return 0
 		#do that
 
-	def upload_mission(client, mission_json, sys_db, out):
+	def download_mission(client, mission_obj, out):
 		# this is all boilerplate right now, we need to send mission info as json
 		# or extract the json info and send it this way.
 		try:
-                        mission = sys_db.get_mission()
-                        #send the mission info to the interop server
-                        mission = client.post_target(mission)
-                        out.insert(END, "Mission posted\n")
+			out.insert(END, "Mission info downloaded\n")
 		except:
-			out.insert(END, 'Something went wrong when uploading mission\n')
+			out.insert(END, 'Something went wrong when downloading mission\n')
 
 	def download_obstacles(client, sys_db, out):
 		return 0
@@ -100,9 +97,9 @@ def main():
 	def bottle_drop(drone, out):
 		try:
 			drone.bottle_drop()
-                	out.insert(END, "Bottle drop signal sent\n")
+			out.insert(END, "Bottle drop signal sent\n")
 		except:
-                        out.insert(END, "Error sending bottle drop signal\n")
+			out.insert(END, "Error sending bottle drop signal\n")
 
 	def get_drone_info(drone, out):
 		return 0
@@ -153,7 +150,7 @@ def main():
 	############################################################
 	###################### WINDOW SETUP ########################
 	############################################################
-	window = Tkinter.Tk()
+	window = tkinter.Tk()
 	window.protocol("WM_DELETE_WINDOW", on_closing)
 	window.title("MSUUS")
 	window.geometry("590x560")
