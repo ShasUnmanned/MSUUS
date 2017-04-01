@@ -5,6 +5,7 @@ import tkinter
 #import UAV
 import datetime
 import MySQLdb
+import MissionPlanner
 
 from tkinter import *
 
