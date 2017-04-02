@@ -85,8 +85,12 @@ def main():
 	def download_mission(client, mission_obj, out):
 		try:
 			missions = client.get_missions()
-			
 			out.insert(END, "Mission info downloaded:\n")
+			insert_stmt = (
+  "INSERT INTO employees (emp_no, first_name, last_name, hire_date) "
+  "VALUES (%s, %s, %s, %s)")
+			data = (2, 'Jane', 'Doe', datetime.date(2012, 3, 23))
+			cursor.execute(insert_stmt, data)
 			out.insert(END, missions)
 			out.insert(END, "\n")
 		except:
