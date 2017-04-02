@@ -1,21 +1,3 @@
-### r
-Script.ChangeMode("Guided")                     # changes mode to "Guided"
-print 'Guided Mode'
-item = MissionPlanner.Utilities.Locationwp() # creating waypoint
-lat = 39.343674                                           # Latitude value
-lng = -86.029741                                         # Longitude value
-alt = 45.720000                                           # altitude value
-MissionPlanner.Utilities.Locationwp.lat.SetValue(item,lat)     # sets latitude
-MissionPlanner.Utilities.Locationwp.lng.SetValue(item,lng)   # sets longitude
-MissionPlanner.Utilities.Locationwp.alt.SetValue(item,alt)     # sets altitude
-print 'WP 1 set'
-MAV.setGuidedModeWP(item)                                    # tells UAV "go to" the set lat/long @ alt
-print 'Going to WP 1'
-time.sleep(10)                                                            # wait 10 seconds
-print 'Ready for next WP'
-
-
-
 import sys
 import clr
 import MissionPlanner
@@ -27,6 +9,7 @@ missionData = False # is mission data available? flag
 print 'Switching to Guided mode.\n'
 Script.ChangeMode("Guided")                      # changes mode to "Guided"
 
+
 ### DB Connection ###
 
 print 'Connecting to database...\n'
@@ -36,15 +19,24 @@ try:
 except:
 	print 'Error connecting to database.\n'
 	
+	
 ### Search For Missions Loop ###
 
 while not missionData:
-	cur = db.cursor() #allows execution of all SQL queries
-	cur.execute("SELECT * FROM targets")
+	cur = db.cursor(dictionary=True) #allows execution of all SQL queries
+	cur.execute("SELECT * FROM waypoints")
 	if cur.fetchAll():
 		missionData = True
 
+
 ### Download Mission Data & Set ###
 
+for row in cur.fetchAll():
+	waypoint = MissionPlanner.Utilities.Locationwp()
+	MissionPlanner.Utilities.Locationwp.lat.SetValue(waypoint,row['latitude'])
+	MissionPlanner.Utilities.Locationwp.lng.SetValue(waypoint,row['longitude'])
+	MissionPlanner.Utilities.Locationwp.alt.SetValue(waypoint,row['altitude'])
+	MAV.setGuidedModeWP(waypoint) 
+	
 
 ### Reroute Around Obstacles ###

@@ -5,7 +5,6 @@ import tkinter
 #import UAV
 import datetime
 import MySQLdb
-import MissionPlanner
 
 from tkinter import *
 
@@ -84,15 +83,21 @@ def main():
 		#do that
 
 	def download_mission(client, mission_obj, out):
-		# this is all boilerplate right now, we need to send mission info as json
-		# or extract the json info and send it this way.
 		try:
-			out.insert(END, "Mission info downloaded\n")
+			missions = client.get_missions()
+			
+			out.insert(END, "Mission info downloaded:\n")
+			out.insert(END, missions)
+			out.insert(END, "\n")
 		except:
 			out.insert(END, 'Something went wrong when downloading mission\n')
 
 	def download_obstacles(client, sys_db, out):
-		return 0
+		try:
+			obstacles = client.get_obstacles()
+			out.insert(END, "Mission info downloaded\n")
+		except:
+			out.insert(END, 'Something went wrong when downloading obstacles\n')
 		#do that
 
 	def bottle_drop(drone, out):
@@ -197,7 +202,7 @@ def main():
 	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
 	connect_button.place(x=10, y=90)
 
-	target_upload_button = Button( window, text="Upload Target", command = lambda: upload_target(client, "{'id':1}",output_textbox) )
+	target_upload_button = Button( window, text="Download Mission", command = lambda: download_mission(client, db, output_textbox) )
 	target_upload_button.place(x=10, y=150)
 
 
