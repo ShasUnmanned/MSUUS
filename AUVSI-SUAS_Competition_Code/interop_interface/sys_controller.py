@@ -82,17 +82,24 @@ def main():
 		return 0
 		#do that
 
-	def download_mission(client, mission_obj, out):
+	def download_mission(client, sys_db, out):
 		try:
 			missions = client.get_missions()
-			out.insert(END, "Mission info downloaded:\n")
-			insert_stmt = (
-  "INSERT INTO employees (emp_no, first_name, last_name, hire_date) "
-  "VALUES (%s, %s, %s, %s)")
-			data = (2, 'Jane', 'Doe', datetime.date(2012, 3, 23))
-			cursor.execute(insert_stmt, data)
-			out.insert(END, missions)
+			out.insert(END, "Mission info downloaded from interop\n")
+			
+
+			for wp in missions[0].mission_waypoints:
+				insert_stmt = ("INSERT INTO waypoints (wp_order, latitude, longitude, altitude, type) "
+	  			"VALUES (%s, %s, %s, %s, %s)")
+				data = (wp.order, wp.latitude, wp.longitude, wp.altitude_msl, "waypoint")
+				cur = db.cursor()
+				print(insert_stmt, data)
+				cur.execute(insert_stmt, data)
+				db.commit()
+			
+			out.insert(END, "Mission info uploaded to database.\n")
 			out.insert(END, "\n")
+
 		except:
 			out.insert(END, 'Something went wrong when downloading mission\n')
 
