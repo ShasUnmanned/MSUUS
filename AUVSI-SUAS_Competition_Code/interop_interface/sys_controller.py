@@ -13,7 +13,7 @@ def main():
 
 
 	############################################################
-	###################### API DEFINITONS ######################
+	########################  DEFINITONS #######################
 	############################################################
 
 	def upload_telemetry(client, last_telem, out):
@@ -26,11 +26,7 @@ def main():
 		out.set(delta.total_seconds() * 1000)
 		client.post_telemetry(telemetry)
 
-	def upload_all_targets(client, target_json, sys_db, out):
-		# this is all boilerplate right now, we need to send target info as json
-		# or extract the json info and send it this way.
-
-		
+	def upload_all_targets(client, target_json, sys_db, out):		
 		cur = db.cursor() #allows execution of all SQL queries
 		cur.execute("SELECT * FROM targets")
 
@@ -57,30 +53,22 @@ def main():
 				image_data = f.read()
 				client.put_target_image(target.id, image_data)
 
-		''' OLD CODE 
-		try:
-                        #create a target object. we will be building this object
-                        #the output of our image classification program, from v$
-                        #stored in our database.
-                        targets, confidence = sys_db.get_all_targets()
-			target_count = 0
-			confirmed_targets = []
-			for i in range(0,len(targets)):
-				if confidence[i] > 90:
-					confirmed_targets.append(targets[i])
-
-
-                        #send the target info to the interop server
-			for i in range(0,confirmed_targets):
-                        	client.post_target(confirmed_targets[i])
-		except:
-			out.insert(END, 'Something went wrong when uploading target\n')
-		'''
-
-
 	def view_current_targets(sys_db, out):
-		return 0
-		#do that
+		cur = db.cursor() #allows execution of all SQL queries
+		cur.execute("SELECT * FROM targets")
+
+		for row in cur.fetchall():
+			target = interop.Target(type = row[1], #indexing starts from 0, data doesn't include target_id
+				latitude = row[2],
+				longitude = row[3],
+				orientation = row[4],
+				shape = row[5],
+				background_color = row[6],
+				alphanumeric = row[7],
+				alphanumeric_color = row[8])
+
+			out.insert(END, target)
+			out.insert(END, "\n")
 
 	def download_mission(client, sys_db, out):
 		try:
@@ -105,11 +93,24 @@ def main():
 
 	def download_obstacles(client, sys_db, out):
 		try:
-			obstacles = client.get_obstacles()
-			out.insert(END, "Mission info downloaded\n")
+			missions = client.get_missions()
+			out.insert(END, "Obstacle info downloaded from interop\n")
+			
+
+			for wp in missions[0].mission_waypoints:
+				insert_stmt = ("INSERT INTO obstacles (wp_order, latitude, longitude, altitude, type) "
+	  			"VALUES (%s, %s, %s, %s, %s)")
+				data = (wp.order, wp.latitude, wp.longitude, wp.altitude_msl, "waypoint")
+				cur = db.cursor()
+				print(insert_stmt, data)
+				cur.execute(insert_stmt, data)
+				db.commit()
+			
+			out.insert(END, "Obstacle info uploaded to database.\n")
+			out.insert(END, "\n")
 		except:
 			out.insert(END, 'Something went wrong when downloading obstacles\n')
-		#do that
+
 
 	def bottle_drop(drone, out):
 		try:
