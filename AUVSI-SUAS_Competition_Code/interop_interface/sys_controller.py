@@ -2,7 +2,7 @@ import interop
 import sys
 import re
 import tkinter
-#import UAV
+import UAV
 import datetime
 import MySQLdb
 
@@ -120,16 +120,21 @@ def main():
 			out.insert(END, "Error sending bottle drop signal\n")
 
 	def get_drone_info(drone, out):
+		try:
+			info = drone.get_info()
+			out.insert(END, info)
+		except:
+			out.insert(END, "Error getting drone info.\n")
 		return 0
 		#do that
 
 	def drone_start_video(drone, out):
+		stream = drone.take_picture()
 		return 0
-		#do that
 
 	def drone_take_picture(drone, out):
+		picture = drone.take_picture()
 		return 0
-		#do that
 
 	def connect(url, username, password, out):
 		try:
@@ -160,7 +165,7 @@ def main():
 	last_telem = datetime.datetime.now()
 
 	imagedir = 'target_images'
-
+	drone = UAV.UAV('http://192.168.1.31','MSUUS','Unmanned2017')
 	#Connect to the mySQL database
 	db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
 	#Use own credentials for actual database

@@ -4,6 +4,7 @@ import sys
 import io
 import os
 import shutil
+import gpsd
 from subprocess import Popen, PIPE
 from string import Template
 from struct import Struct
@@ -22,6 +23,7 @@ camera.resolution = (3280, 2464)
 cap_count = 0
 Acap_count = 0
 autopic = False
+gpsd.connect()
  
 @app.route('/')
 def hello_world():
@@ -38,9 +40,9 @@ def run_command():
 
 @app.route('/get_gps', methods=['GET'])
 def get_gps():
-	#######################################
-	# need to actually get the gps somehow#
-	#######################################
+	gpsd.get_current()
+	latitude, longitude = gpsd.position()
+	
 	return jsonify( {
 		"latitude": latitude,
 		"longitude": longitude,
