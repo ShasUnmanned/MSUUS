@@ -165,7 +165,7 @@ def main():
 	last_telem = datetime.datetime.now()
 
 	imagedir = 'target_images'
-	drone = UAV.UAV('http://192.168.1.31','MSUUS','Unmanned2017')
+	drone = UAV.UAV('http://192.168.1.31:5000','MSUUS','Unmanned2017')
 	#Connect to the mySQL database
 	db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
 	#Use own credentials for actual database
