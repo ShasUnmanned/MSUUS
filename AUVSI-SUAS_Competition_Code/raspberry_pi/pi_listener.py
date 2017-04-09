@@ -70,7 +70,7 @@ def take_picture():
 
 	return jsonify( {
 		"id": (cap_count-1),
-		"image": str(encoded_image),
+		"image": encoded_image,
 		})
 
 @app.route('/start_autopicture', methods=['GET'])

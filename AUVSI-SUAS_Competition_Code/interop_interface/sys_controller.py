@@ -1,3 +1,8 @@
+
+import PIL.Image
+from io import BytesIO
+from tkinter import *
+
 import interop
 import sys
 import re
@@ -8,8 +13,6 @@ import MySQLdb
 import json 
 import base64
 
-from PIL import Image
-from tkinter import *
 
 
 def main():
@@ -148,7 +151,7 @@ def main():
 			cur.execute(insert_stmt, data)
 			db.commit()
 			
-			im = Image.open(BytesIO(base64.b64decode(picture["image"])))
+			im = PIL.Image.open(BytesIO(base64.b64decode(picture["image"])))
 			
 			out.insert(END, "Picture uploaded to database\n")
 		#except:
