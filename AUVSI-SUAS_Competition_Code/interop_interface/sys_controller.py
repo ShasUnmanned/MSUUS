@@ -136,7 +136,7 @@ def main():
 		#try:
 			picture = drone.take_picture()
 			out.insert(END, "Take pictures signal sent\n")
-			out.insert(END, picture)
+			#out.insert(END, picture)
 		#except:
 		#	out.insert(END, "Error sending take picture signal\n")
 
