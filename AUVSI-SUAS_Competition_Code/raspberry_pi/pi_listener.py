@@ -23,11 +23,14 @@ camera.resolution = (3280, 2464)
 cap_count = 0
 Acap_count = 0
 autopic = False
+current_time = time.now()
 gpsd.connect()
  
 @app.route('/')
-def hello_world():
-	return 'MSUUS PI PAYLOAD'
+def get_status():	
+	return jsonify( {
+		"message": "MSUUS PI PAYLOAD ONLINE"
+		})
 
 # run a command (contained in a json object) passed by POST method as a shell command on the pi
 @app.route('/run_command', methods=['GET', 'POST'])
@@ -52,8 +55,7 @@ def get_gps():
 def take_picture():
 	global cap_count, camera
 	cap_count += 1
-	sleep(2)
-	filename = 'test_capture_'+str(cap_count-1)+'.jpg'
+	filename = current_time+'/test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 
 	#return flask.send_file(filename, mimetype='image/jpg')
@@ -66,20 +68,20 @@ def take_picture():
 		"image": encoded_image,
 		})
 
-@app.route('/start_autopicture', methods=['POST'])
+@app.route('/start_autopicture', methods=['GET'])
 def start_autopicture():
 	global autopic
 	autopic = True
 	return Flask.jsonify( {
-		"status": "ok",
+		"message": "autopicture started",
 		})
 
-@app.route('/stop_autopicture', methods=['POST'])
-def start_autopicture():
+@app.route('/stop_autopicture', methods=['GET'])
+def stop_autopicture():
 	global autopic
 	autopic = False
 	return Flask.jsonify( {
-		"status": "ok",
+		"message": "autopicture stopped",
 		})
 
 
@@ -89,7 +91,7 @@ def bottle_release():
 	#do_release():                       #
 	######################################
 	return jsonify( {
-		"bottle_release":"released",
+		"message":"bottle released",
 		"release_time":time.time(),
 		})
 
@@ -107,6 +109,7 @@ def restart_listener():
 	subprocess.call(['python pi_listener.py'])
 	time.sleep(1)
 	exit()
+	time.sleep(1)
 	print('did it make it here?')
 
 @app.route('/stop_listener')
@@ -119,10 +122,9 @@ def take_autopicture():
 	global Acap_count, camera
 	Acap_count += 1
 	sleep(2)
-	filename = 'autopic/test_capture_'+str(cap_count-1)+'.jpg'
+	filename = current_time+'/autopic/test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 	
-
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=5000)

@@ -119,12 +119,12 @@ def main():
 		except:
 			out.insert(END, "Error sending bottle drop signal\n")
 
-	def get_drone_info(drone, out):
+	def ping_drone(drone, out):
 		try:
 			info = drone.get_info()
 			out.insert(END, info)
 		except:
-			out.insert(END, "Error getting drone info.\n")
+			out.insert(END, "Error pinging drone.\n")
 		return 0
 		#do that
 
@@ -132,9 +132,13 @@ def main():
 		stream = drone.take_picture()
 		return 0
 
-	def drone_take_picture(drone, out):
-		picture = drone.take_picture()
-		return 0
+	def drone_take_picture(drone, sys_db, out):
+		try:
+			picture = drone.take_picture()
+			out.insert(END, "Take pictures signal sent\n")
+			out.insert(END, picture)
+		except:
+			out.insert(END, "Error sending take picture signal\n")
 
 	def connect(url, username, password, out):
 		try:
@@ -173,6 +177,7 @@ def main():
 	############################################################
 	###################### WINDOW SETUP ########################
 	############################################################
+	
 	window = tkinter.Tk()
 	window.protocol("WM_DELETE_WINDOW", on_closing)
 	window.title("MSUUS")
@@ -216,12 +221,28 @@ def main():
 	data_rate_field = Entry( window, textvariable=data_rate_str )
 	data_rate_field.place(x=430, y=10, width=60)
 
-	connect_button = Button( window, text="Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
-	connect_button.place(x=10, y=90)
-
+	connect_button = Button( window, text="Interop Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
+	connect_button.place(x=10, y=90)	
+	
+	ping_button = Button( window, text="Ping Drone", command = lambda: ping_drone(drone, output_textbox) )
+	ping_button.place(x=136, y=90)
+	
+	take_picture_button = Button( window, text="Take Picture", command = lambda: drone_take_picture(drone, db, output_textbox) )
+	take_picture_button.place(x=10, y=120)
+	
+	auto_picture_button = Button( window, text="Auto Picture", command = lambda: drone_take_picture(drone, db, output_textbox) )
+	auto_picture_button.place(x=112, y=120)
+	
+	auto_picture_button = Button( window, text="Start Stream", command = lambda: drone_start_video(drone, db, output_textbox) )
+	auto_picture_button.place(x=214, y=120)
+	
 	target_upload_button = Button( window, text="Download Mission", command = lambda: download_mission(client, db, output_textbox) )
 	target_upload_button.place(x=10, y=150)
 
+
+	############################################################
+	######################## MAIN LOOP #########################
+	############################################################
 
 	while True:
 		upload_telemetry(client, last_telem, data_rate_str)
