@@ -6,6 +6,7 @@ import UAV
 import datetime
 import MySQLdb
 import json 
+import base64
 
 from tkinter import *
 
@@ -136,12 +137,12 @@ def main():
 
 	def drone_take_picture(drone, sys_db, out):
 		#try:
-			picture = json.loads(drone.take_picture())
+			picture = drone.take_picture()
 			#picture = drone.take_picture()
 			out.insert(END, "Take pictures signal sent\n")
 			
 			insert_stmt = ("INSERT INTO target_images (id, image) VALUES (%s, %s)")
-			data = (picture["id"], picture["image"])
+			data = (picture["id"], base64.decodestring(picture["image"]))
 			cur = db.cursor()
 			cur.execute(insert_stmt, data)
 			db.commit()
