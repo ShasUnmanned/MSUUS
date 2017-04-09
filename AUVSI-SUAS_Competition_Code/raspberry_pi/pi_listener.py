@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_file
 from subprocess import call
 import sys
 import io
@@ -69,7 +69,7 @@ def take_picture():
 	with open(filename, "rb") as image_file:
     		encoded_image = base64.b64encode(image_file.read())
 
-	return Flask.send_file(filename, mimetype='image/jpg')
+	return send_file(filename, mimetype='image/jpg')
 	#return jsonify( {
 	#	"id": (cap_count-1),
 	#	"image": encoded_image,
