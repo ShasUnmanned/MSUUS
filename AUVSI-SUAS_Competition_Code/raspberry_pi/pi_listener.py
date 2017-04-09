@@ -13,6 +13,7 @@ from time import sleep, time
 
 import picamera
 import time
+from datetime import datetime
 import base64
 
 
@@ -23,7 +24,7 @@ camera.resolution = (3280, 2464)
 cap_count = 0
 Acap_count = 0
 autopic = False
-current_time = time.now()
+current_time = datetime.now().strftime('%Y%m%d%H%M%S')
 gpsd.connect()
  
 @app.route('/')
