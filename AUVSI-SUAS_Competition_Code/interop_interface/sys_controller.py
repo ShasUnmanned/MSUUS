@@ -8,6 +8,7 @@ import MySQLdb
 import json 
 import base64
 
+from PIL import Image
 from tkinter import *
 
 
@@ -142,10 +143,12 @@ def main():
 			out.insert(END, "Take pictures signal sent\n")
 			
 			insert_stmt = ("INSERT INTO target_images (id, image) VALUES (%s, %s)")
-			data = (picture["id"], base64.decodestring(picture["image"]))
+			data = (picture["id"], picture["image"])
 			cur = db.cursor()
 			cur.execute(insert_stmt, data)
 			db.commit()
+			
+			im = Image.open(BytesIO(base64.b64decode(picture["image"])))
 			
 			out.insert(END, "Picture uploaded to database\n")
 		#except:

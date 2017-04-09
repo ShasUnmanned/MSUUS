@@ -64,16 +64,12 @@ def take_picture():
 	filename = captures_path+'/image_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 
-	#return flask.send_file(filename, mimetype='image/jpg')
-	
 	with open(filename, "rb") as image_file:
-		pic = image_file.read()
-		encoded_image = base64.b64encode(pic)
+		encoded_image = base64.b64encode(image_file.read())
 
-	#return send_file(filename, mimetype='image/jpg')
 	return jsonify( {
 		"id": (cap_count-1),
-		"image": str(pic),
+		"image": str(encoded_image),
 		})
 
 @app.route('/start_autopicture', methods=['GET'])
