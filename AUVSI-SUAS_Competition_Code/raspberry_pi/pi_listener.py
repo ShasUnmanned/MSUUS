@@ -26,9 +26,11 @@ Acap_count = 0
 autopic = False
 current_time = datetime.now().strftime('%Y%m%d-%H%M')
 gpsd.connect()
-os.makedirs('/home/pi/captures/'+current_time)
-os.makedirs('/home/pi/captures/'+current_time+'/autopic')
+
 captures_path = '/home/pi/captures/'+current_time
+if not os.path.exists(captures_path):
+	os.makedirs(captures_path)
+	os.makedirs(captures_path+'/autopic')
 
 @app.route('/')
 def get_status():	
