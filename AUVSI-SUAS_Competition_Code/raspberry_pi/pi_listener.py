@@ -71,7 +71,7 @@ def take_picture():
 
 
 
-	return flask.send_file(filename, mimetype='image/jpg')
+	return send_file(filename, mimetype='image/jpg')
 	#return jsonify( {
 	#	"id": (cap_count-1),
 	#	"image": encoded_image,
