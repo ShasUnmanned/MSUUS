@@ -5,6 +5,7 @@ import tkinter
 import UAV
 import datetime
 import MySQLdb
+import json 
 
 from tkinter import *
 
@@ -123,6 +124,7 @@ def main():
 		try:
 			info = drone.get_info()
 			out.insert(END, info)
+			out.insert(END, "\n")
 		except:
 			out.insert(END, "Error pinging drone.\n")
 		return 0
@@ -134,9 +136,17 @@ def main():
 
 	def drone_take_picture(drone, sys_db, out):
 		#try:
-			picture = drone.take_picture()
+			picture = json.loads(drone.take_picture())
+			#picture = drone.take_picture()
 			out.insert(END, "Take pictures signal sent\n")
-			#out.insert(END, picture)
+			
+			insert_stmt = ("INSERT INTO target_images (id, image) VALUES (%s, %s)")
+			data = (picture["id"], picture["image"])
+			cur = db.cursor()
+			cur.execute(insert_stmt, data)
+			db.commit()
+			
+			out.insert(END, "Picture uploaded to database\n")
 		#except:
 		#	out.insert(END, "Error sending take picture signal\n")
 
