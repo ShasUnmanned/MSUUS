@@ -59,7 +59,7 @@ def get_gps():
 def take_picture():
 	global cap_count, camera
 	cap_count += 1
-	filename = '/image_'+str(cap_count-1)+'.jpg'
+	filename = captures_path+'/image_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 
 	#return flask.send_file(filename, mimetype='image/jpg')
@@ -126,7 +126,7 @@ def take_autopicture():
 	global Acap_count, camera
 	Acap_count += 1
 	sleep(2)
-	filename = '/autopic/test_capture_'+str(cap_count-1)+'.jpg'
+	filename = captures_path+'/autopic/test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 	
 
