@@ -133,12 +133,12 @@ def main():
 		return 0
 
 	def drone_take_picture(drone, sys_db, out):
-		try:
+		#try:
 			picture = drone.take_picture()
 			out.insert(END, "Take pictures signal sent\n")
 			out.insert(END, picture)
-		except:
-			out.insert(END, "Error sending take picture signal\n")
+		#except:
+		#	out.insert(END, "Error sending take picture signal\n")
 
 	def connect(url, username, password, out):
 		try:
