@@ -26,7 +26,8 @@ Acap_count = 0
 autopic = False
 current_time = datetime.now().strftime('%Y%m%d-%H%M')
 gpsd.connect()
-os.mkdirs('/home/pi/captures/'+current_time)
+os.makedirs('/home/pi/captures/'+current_time)
+os.makedirs('/home/pi/captures/'+current_time+'/autopic')
 captures_path = '/home/pi/captures/'+current_time
 
 @app.route('/')
@@ -125,7 +126,7 @@ def take_autopicture():
 	global Acap_count, camera
 	Acap_count += 1
 	sleep(2)
-	filename = captures_path+current_time+'/autopic/test_capture_'+str(cap_count-1)+'.jpg'
+	filename = '/autopic/test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 	
 
