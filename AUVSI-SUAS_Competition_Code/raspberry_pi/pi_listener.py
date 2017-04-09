@@ -20,7 +20,8 @@ import base64
 app = Flask(__name__)
 
 camera = picamera.PiCamera()
-camera.resolution = (3280, 2464)
+#camera.resolution = (3280, 2464)
+camera.resolution = (1024,1024)
 cap_count = 0
 Acap_count = 0
 autopic = False
