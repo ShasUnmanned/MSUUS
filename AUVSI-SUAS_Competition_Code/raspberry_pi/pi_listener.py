@@ -67,7 +67,8 @@ def take_picture():
 	#return flask.send_file(filename, mimetype='image/jpg')
 	
 	with open(filename, "rb") as image_file:
-    		encoded_image = base64.b64encode(image_file.read())
+		return send_file(image_file, mimetype='image/jpg')
+    	encoded_image = base64.b64encode(image_file.read())
 
 	return send_file(filename, mimetype='image/jpg')
 	#return jsonify( {
