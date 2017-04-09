@@ -24,9 +24,11 @@ camera.resolution = (3280, 2464)
 cap_count = 0
 Acap_count = 0
 autopic = False
-current_time = datetime.now().strftime('%Y%m%d%H%M%S')
+current_time = datetime.now().strftime('%Y%m%d-%H%M')
 gpsd.connect()
- 
+os.mkdirs('/home/pi/captures/'+current_time)
+captures_path = '/home/pi/captures/'+current_time
+
 @app.route('/')
 def get_status():	
 	return jsonify( {
@@ -56,7 +58,7 @@ def get_gps():
 def take_picture():
 	global cap_count, camera
 	cap_count += 1
-	filename = current_time+'/test_capture_'+str(cap_count-1)+'.jpg'
+	filename = '/image_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 
 	#return flask.send_file(filename, mimetype='image/jpg')
@@ -123,7 +125,7 @@ def take_autopicture():
 	global Acap_count, camera
 	Acap_count += 1
 	sleep(2)
-	filename = current_time+'/autopic/test_capture_'+str(cap_count-1)+'.jpg'
+	filename = captures_path+current_time+'/autopic/test_capture_'+str(cap_count-1)+'.jpg'
 	camera.capture(filename)
 	
 
