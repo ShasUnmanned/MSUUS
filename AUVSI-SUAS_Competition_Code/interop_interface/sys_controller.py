@@ -76,11 +76,12 @@ def main():
 
 			out.insert(END, target)
 			out.insert(END, "\n")
+			out.see(END)
 
 	def download_mission(client, sys_db, out):
 		try:
 			missions = client.get_missions()
-			out.insert(END, "Mission info downloaded from interop\n")
+			out.insert(END, "Mission info downloaded from interoperability server\n")
 			
 
 			for wp in missions[0].mission_waypoints:
@@ -93,10 +94,11 @@ def main():
 				db.commit()
 			
 			out.insert(END, "Mission info uploaded to database.\n")
-			out.insert(END, "\n")
+			out.see(END)
 
 		except:
 			out.insert(END, 'Something went wrong when downloading mission\n')
+			out.see(END)
 
 	def download_obstacles(client, sys_db, out):
 		try:
@@ -115,35 +117,38 @@ def main():
 			
 			out.insert(END, "Obstacle info uploaded to database.\n")
 			out.insert(END, "\n")
+			out.see(END)
 		except:
 			out.insert(END, 'Something went wrong when downloading obstacles\n')
+			out.see(END)
 
 
 	def bottle_drop(drone, out):
 		try:
 			drone.bottle_drop()
 			out.insert(END, "Bottle drop signal sent\n")
+			out.see(END)
 		except:
 			out.insert(END, "Error sending bottle drop signal\n")
+			out.see(END)
 
 	def ping_drone(drone, out):
 		try:
 			info = drone.get_info()
-			out.insert(END, info)
+			out.insert(END, info["message"])
 			out.insert(END, "\n")
+			out.see(END)
 		except:
 			out.insert(END, "Error pinging drone.\n")
-		return 0
-		#do that
+			out.see(END)
 
 	def drone_start_video(drone, out):
 		stream = drone.take_picture()
 		return 0
 
 	def drone_take_picture(drone, sys_db, out, pic_out):
-		#try:
+		try:
 			picture = drone.take_picture()
-			#picture = drone.take_picture()
 			out.insert(END, "Picture signal sent\n")
 			
 			insert_stmt = ("INSERT INTO target_images (id, image) VALUES (%s, %s)")
@@ -152,15 +157,16 @@ def main():
 			cur.execute(insert_stmt, data)
 			db.commit()
 			
-			size = 180, 160
 			im = PIL.Image.open(BytesIO(base64.b64decode(picture["image"])))
-			im2 = PIL.ImageTk.PhotoImage(im.resize(size).rotate(180))
+			im2 = PIL.ImageTk.PhotoImage(im.resize((180,160)).rotate(180))
 			pic_out.configure(image = im2)
 			pic_out.image = im2
 			
 			out.insert(END, "Picture: " + picture["filename"] + " uploaded to database\n")
-		#except:
-		#	out.insert(END, "Error sending take picture signal\n")
+			out.see(END)
+		except:
+			out.insert(END, "Error sending take picture signal\n")
+			out.see(END)
 
 	def connect(url, username, password, out):
 		try:
@@ -170,8 +176,10 @@ def main():
 			                        username=username,
 			                        password=password)
 			out.insert(END, "Connected to " + url + " with username '" + username + "' and password '" + password + "'.\n")
+			out.see(END)
 		except:
 			out.insert(END, "Something when wrong when trying to connect\n")	
+			out.see(END)
 	
 	def on_closing():
 		window.destroy()
@@ -204,7 +212,7 @@ def main():
 	window = tkinter.Tk()
 	
 	window.protocol("WM_DELETE_WINDOW", on_closing)
-	window.title("MSUUS")
+	window.title("MSUUS System Software v0.5")
 	window.geometry("590x560")
 
 	url = StringVar( window )
@@ -215,7 +223,7 @@ def main():
 	password.set('testpass')
 	
 
-	url_label = Label( window, text="Server URL")
+	url_label = Label( window, text="Interop URL")
 	url_label.place(x=10,y=10)
 	url_textbox = Entry( window, textvariable=url )
 	url_textbox.place(x=100, y=10)
