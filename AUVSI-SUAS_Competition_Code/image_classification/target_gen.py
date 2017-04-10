@@ -86,7 +86,7 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	randy = random.randint(4,12) 
 	composite = composite.crop((randx, randy, randx+64, randy+64))
 
-	#composite.save('composites/shapes/'+letter_list[shape_index].lower()+'/'+composite_path)
+	composite.save('composites/shapes/'+letter_list[shape_index].lower()+'/'+composite_path)
 
 	image = composite.convert("RGBA")
 	

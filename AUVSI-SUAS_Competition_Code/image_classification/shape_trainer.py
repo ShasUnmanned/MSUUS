@@ -62,46 +62,36 @@ for q in range(0, num_variations):
 dataset_file = 'composites/shapes/'
 
 print("loading image dataset")
-x, labels = image_preloader(dataset_file, image_shape=(64, 64), mode='folder', categorical_labels=True, normalize=False)
+x, label_set = image_preloader(dataset_file, image_shape=(64, 64), mode='folder', categorical_labels=True, normalize=False)
 
-images = [None] * len(x)
+#images = [None] * len(x)
+
+images = []
+labels = []
+images_test = []
+labels_test = []
 
 for i in range(0, len(x)):
 	temp = x[i]
-	images[i] = np.uint8(temp) 
-	images[i] = Image.fromarray(images[i])
-	images[i] = images[i].convert('L')
-	enh_c = ImageEnhance.Contrast(images[i])
-	images[i] = enh_c.enhance(12.0)
-	images[i] = images[i].filter(ImageFilter.SMOOTH_MORE)
-	images[i] = images[i].filter(ImageFilter.SMOOTH_MORE)
-	images[i] = images[i].filter(ImageFilter.EDGE_ENHANCE_MORE)
-	images[i] = images[i].filter(ImageFilter.SMOOTH_MORE)
-	images[i] = images[i].filter(ImageFilter.EDGE_ENHANCE_MORE)
-	tmp_arr = np.fromstring(images[i].tobytes(), np.uint8)
-	images[i] = tmp_arr.reshape(64,64,1)	
-
-
-for i in range(0, num_testing_images):
-	tmp_img, tmp_label = target_gen.generate_image(return_type = "shape")
-	tmp_img = tmp_img.convert('L')
-	enh_c = ImageEnhance.Contrast(tmp_img)
-	tmp_img = enh_c.enhance(12.0)
-	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
-	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
-	tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
-	tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
-	tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
-	#if i == 1:
-		#tmp_img.show()
-	tmp_arr = np.fromstring(tmp_img.tobytes(), np.uint8)
-	images_test[i] = tmp_arr.reshape(64,64,1)
-	labels_test[i] = np.zeros(13)
-	labels_test[i][tmp_label] = 1.
-	sys.stdout.write("Generating image %d/%d	 \r" % (i, num_testing_images) )
-	sys.stdout.flush()
-sys.stdout.write("Generating image %d/%d \n" % (i+1, num_testing_images) )
-sys.stdout.write("Finished generating images\n")
+	temp = np.uint8(temp) 
+	temp = Image.fromarray(temp)
+	temp = temp.convert('L')
+	enh_c = ImageEnhance.Contrast(temp)
+	temp = enh_c.enhance(12.0)
+	temp = temp.filter(ImageFilter.SMOOTH_MORE)
+	temp = temp.filter(ImageFilter.SMOOTH_MORE)
+	temp = temp.filter(ImageFilter.EDGE_ENHANCE_MORE)
+	temp = temp.filter(ImageFilter.SMOOTH_MORE)
+	temp = temp.filter(ImageFilter.EDGE_ENHANCE_MORE)
+	tmp_arr = np.fromstring(temp.tobytes(), np.uint8)
+	temp = tmp_arr.reshape(64,64,1)
+	
+	if not random.randrange(0,10):
+		images_test.append( temp )
+		labels_test.append( label_set[i] )
+	else:
+		images.append( temp )
+		labels.append( label_set[i] )
 
 # shuffle images
 print("shuffling images")
@@ -134,25 +124,21 @@ network = input_data(shape=[None, 64, 64, 1],
 
 
 # convolution 2
-network = conv_2d(network, 64, 3, activation='relu')
-# max pooling 2
-network = max_pool_2d(network, 2)
-# convolution 2
 network = conv_2d(network, 32, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
 # convolution 2
-network = conv_2d(network, 16, 5, activation='relu')
+network = conv_2d(network, 16, 3, activation='relu')
 # convolution 2
-network = conv_2d(network, 16, 5, activation='relu')
+network = conv_2d(network, 16, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
 # convolution 2
-network = conv_2d(network, 16, 5, activation='relu')
+network = conv_2d(network, 16, 3, activation='relu')
+# convolution 2
+network = conv_2d(network, 16, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
-# fully-connected
-network = fully_connected(network,128, activation='relu')
 # fully-connected
 network = fully_connected(network,128, activation='relu')
 
@@ -163,15 +149,15 @@ network = dropout(network, 0.5)
 network = fully_connected(network, 13, activation='softmax')
 
 
-network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.05)
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0001)
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/SSD480/checkpoints/shape_classifier.tfl.ckpt')
 
 # if previously trained model is available use that
-#model.load('shape_classifier.tfl')
+model.load('shape_classifier.tfl')
 
-model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=64, snapshot_epoch=True, run_id='shape_classifier')
+model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=32, snapshot_epoch=True, run_id='shape_classifier')
 
 model.save("shape_classifier.tfl")
 print("Network trained and saved as shape_classifier.tfl")
