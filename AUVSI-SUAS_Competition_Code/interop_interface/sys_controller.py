@@ -1,5 +1,6 @@
 
 import PIL.Image
+import PIL.ImageTk
 from io import BytesIO
 from tkinter import *
 
@@ -139,11 +140,11 @@ def main():
 		stream = drone.take_picture()
 		return 0
 
-	def drone_take_picture(drone, sys_db, out):
+	def drone_take_picture(drone, sys_db, out, pic_out):
 		#try:
 			picture = drone.take_picture()
 			#picture = drone.take_picture()
-			out.insert(END, "Take pictures signal sent\n")
+			out.insert(END, "Picture signal sent\n")
 			
 			insert_stmt = ("INSERT INTO target_images (id, image) VALUES (%s, %s)")
 			data = (picture["id"], picture["image"])
@@ -151,9 +152,13 @@ def main():
 			cur.execute(insert_stmt, data)
 			db.commit()
 			
+			size = 180, 160
 			im = PIL.Image.open(BytesIO(base64.b64decode(picture["image"])))
+			im2 = PIL.ImageTk.PhotoImage(im.resize(size).rotate(180))
+			pic_out.configure(image = im2)
+			pic_out.image = im2
 			
-			out.insert(END, "Picture uploaded to database\n")
+			out.insert(END, "Picture: " + picture["filename"] + " uploaded to database\n")
 		#except:
 		#	out.insert(END, "Error sending take picture signal\n")
 
@@ -191,11 +196,13 @@ def main():
 	db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
 	#Use own credentials for actual database
 
+
 	############################################################
 	###################### WINDOW SETUP ########################
 	############################################################
 	
 	window = tkinter.Tk()
+	
 	window.protocol("WM_DELETE_WINDOW", on_closing)
 	window.title("MSUUS")
 	window.geometry("590x560")
@@ -237,6 +244,13 @@ def main():
 	data_rate_label.place(x=290, y=10)
 	data_rate_field = Entry( window, textvariable=data_rate_str )
 	data_rate_field.place(x=430, y=10, width=60)
+	
+	
+	last_pic = PIL.ImageTk.PhotoImage(PIL.Image.open('blank.png'))
+	picture_box_label = Label( window, text="Last Image:" )
+	picture_box_label.place(x=290, y=40)
+	picture_box_field = Label( window, image = last_pic )
+	picture_box_field.place(x=370, y=40, width = 180, height = 160)
 
 	connect_button = Button( window, text="Interop Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
 	connect_button.place(x=10, y=90)	
@@ -244,14 +258,16 @@ def main():
 	ping_button = Button( window, text="Ping Drone", command = lambda: ping_drone(drone, output_textbox) )
 	ping_button.place(x=136, y=90)
 	
-	take_picture_button = Button( window, text="Take Picture", command = lambda: drone_take_picture(drone, db, output_textbox) )
+	take_picture_button = Button( window, text="Take Picture", command = lambda: drone_take_picture(drone, db, output_textbox, picture_box_field) )
 	take_picture_button.place(x=10, y=120)
 	
 	auto_picture_button = Button( window, text="Auto Picture", command = lambda: drone_take_picture(drone, db, output_textbox) )
 	auto_picture_button.place(x=112, y=120)
+	auto_picture_button.configure(state='disable')
 	
-	auto_picture_button = Button( window, text="Start Stream", command = lambda: drone_start_video(drone, db, output_textbox) )
-	auto_picture_button.place(x=214, y=120)
+	stream_button = Button( window, text="Start Stream", command = lambda: drone_start_video(drone, db, output_textbox) )
+	stream_button.place(x=214, y=120)
+	stream_button.configure(state='disable')
 	
 	target_upload_button = Button( window, text="Download Mission", command = lambda: download_mission(client, db, output_textbox) )
 	target_upload_button.place(x=10, y=150)

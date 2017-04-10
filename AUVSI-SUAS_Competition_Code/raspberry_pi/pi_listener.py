@@ -66,10 +66,11 @@ def take_picture():
 	camera.capture(filename)
 
 	with open(filename, "rb") as image_file:
-		encoded_image = base64.b64encode(image_file.read())
+		encoded_image = base64.b64encode(image_file.read()).decode()
 
 	return jsonify( {
 		"id": (cap_count-1),
+		"filename": filename,
 		"image": encoded_image,
 		})
 
