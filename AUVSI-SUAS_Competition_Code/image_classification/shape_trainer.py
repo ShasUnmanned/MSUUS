@@ -31,33 +31,6 @@ shape_list = ['Circle', 'Semicircle', 'Quartercircle', 'Triangle', 'Square', 'Re
 
 
 counter = 0
-'''
-for q in range(0, num_variations):
-	for i in range(0, 26):
-		for a in range(0, 13):
-			tmp_img, tmp_label = target_gen.generate_image(requested_letter=letter_list[i], 
-				requested_shape=shape_list[a], 
-				#requested_letter_color="White", 
-				#requested_shape_color="Black", 
-				return_type = "shape")
-		
-			#for q in range(0, num_variations):
-			tmp_img_2 = tmp_img
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.SMOOTH_MORE)
-			tmp_img_2 = tmp_img_2.convert('L')
-			tmp_img_2 = tmp_img_2.filter(ImageFilter.EDGE_ENHANCE_MORE)
-			images[counter] = np.reshape(tmp_img_2.getdata(), (64, 64, -1))
-			labels[counter] = np.zeros(13)
-			labels[counter][tmp_label] = 1
-			#print(str(labels[counter]))
-			ls_str = 'letter ' + letter_list[i]
-			print(ls_str + ", shape " + shape_list[a] + ' variation ' + str(q))
-
-			counter += 1
-			#if (q == 0 and i == 0):
-			#	tmp_img_2.show()
-'''
-
 # load images
 dataset_file = 'composites/shapes/'
 
@@ -86,7 +59,7 @@ for i in range(0, len(x)):
 	tmp_arr = np.fromstring(temp.tobytes(), np.uint8)
 	temp = tmp_arr.reshape(64,64,1)
 	
-	if not random.randrange(0,10):
+	if not random.randrange(0,5):
 		images_test.append( temp )
 		labels_test.append( label_set[i] )
 	else:
@@ -110,7 +83,7 @@ img_distortion = ImageAugmentation()
 
 # only flip left/right for shape training
 img_distortion.add_random_flip_leftright()
-img_distortion.add_random_blur(sigma_max=1.)
+img_distortion.add_random_blur(sigma_max=1.5)
 
 
 
@@ -124,24 +97,27 @@ network = input_data(shape=[None, 64, 64, 1],
 
 
 # convolution 2
+network = conv_2d(network, 16, 5, activation='relu')
+# max pooling 2
+network = max_pool_2d(network, 2)
+# dropout
+network = dropout(network, 0.3)
+# convolution 2
+network = conv_2d(network, 24, 3, activation='relu')
+# max pooling 2
+network = max_pool_2d(network, 2)
+# dropout
+network = dropout(network, 0.3)
+# convolution 2
 network = conv_2d(network, 32, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
-# convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
-# convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
-# max pooling 2
-network = max_pool_2d(network, 2)
-# convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
-# convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
-# max pooling 2
-network = max_pool_2d(network, 2)
+# dropout
+network = dropout(network, 0.3)
 # fully-connected
-network = fully_connected(network,128, activation='relu')
-
+network = fully_connected(network, 512, activation='relu')
+# fully-connected
+network = fully_connected(network, 512, activation='relu')
 # dropout
 network = dropout(network, 0.5)
 
@@ -149,15 +125,15 @@ network = dropout(network, 0.5)
 network = fully_connected(network, 13, activation='softmax')
 
 
-network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0001)
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/SSD480/checkpoints/shape_classifier.tfl.ckpt')
 
 # if previously trained model is available use that
-model.load('shape_classifier.tfl')
+#model.load('shape_classifier.tfl')
 
-model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=32, snapshot_epoch=True, run_id='shape_classifier')
+model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=256, snapshot_epoch=True, run_id='shape_classifier')
 
 model.save("shape_classifier.tfl")
 print("Network trained and saved as shape_classifier.tfl")

@@ -5,6 +5,7 @@ from PIL import ImageFilter
 import random
 import webcolors
 import math
+import os
 
 class target():
 	def __init__(self, path, letter, letter_color, shape, shape_color, image, label):
@@ -61,20 +62,25 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	
 	
 	background_path = 'grass_images/Grass'+str(random.randint(1,7))+'.png'
-	shape_path = 'shapes/' + shape + '.png'
+	shape_path = 'shapes/' + shape + '_' + str(random.randint(1,2)) + '.png'
 	composite_path = letter_color + "_" + letter + "_" + shape_color + "_" + shape + ".png"
 
 	composite = Image.open(background_path)
 	shape_temp = Image.open(shape_path)
+	shape_temp2 = shape_temp.copy()
 	
-	composite.paste(replace_color(shape_path, shape_color), (64,64), shape_temp)
+	shape_temp2.paste(shape_temp, mask=shape_temp)
+	shape_temp2 = shape_temp2.filter(ImageFilter.EDGE_ENHANCE)
+	shape_temp2 = shape_temp2.filter(ImageFilter.GaussianBlur(3))
+	shape_temp2.paste(replace_color(shape_path, shape_color), mask=shape_temp)
+	composite.paste(shape_temp2, (64,64), shape_temp)
 	temp = ImageDraw.Draw(composite)
 	font = ImageFont.truetype("LiberationMono-Bold.ttf", 62)
 	W, H = 256, 256
 	w, h = temp.textsize(letter)
 	temp.text((108, 99),letter,letter_color,font=font)
+	
 
-	composite = composite.filter(ImageFilter.EDGE_ENHANCE)
 	composite = composite.rotate(random.randint(0,359))
 	scalex = random.randint(-5,5)
 	scaley = random.randint(-5,5) 
@@ -85,8 +91,13 @@ def generate_image(requested_letter = None, requested_shape = None, requested_le
 	randx = random.randint(4,12)
 	randy = random.randint(4,12) 
 	composite = composite.crop((randx, randy, randx+64, randy+64))
-
-	composite.save('composites/shapes/'+letter_list[shape_index].lower()+'/'+composite_path)
+	
+	composite = composite.filter(ImageFilter.GaussianBlur(0.5))
+	
+	directory = 'composites/shapes/'+letter_list[shape_index].lower()
+	if not os.path.exists(directory):
+		os.makedirs(directory)
+	composite.save(directory+'/'+composite_path)
 
 	image = composite.convert("RGBA")
 	

@@ -23,7 +23,9 @@ tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
 tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
 tmp_img = tmp_img.filter(ImageFilter.SMOOTH_MORE)
 tmp_img = tmp_img.filter(ImageFilter.EDGE_ENHANCE_MORE)
+
 image = np.reshape(tmp_img.getdata(), (64, 64, 1))
+
 tmp_img.show()
 
 
@@ -35,20 +37,30 @@ network = input_data(shape=[None, 64, 64, 1],
 	data_preprocessing=img_preprocessor,
 	data_augmentation=img_distortion)
 
-network = conv_2d(network, 32, 3, activation='relu')
-network = max_pool_2d(network, 2)
-network = conv_2d(network, 16, 3, activation='relu')
-network = max_pool_2d(network, 2)
+# convolution 2
 network = conv_2d(network, 16, 5, activation='relu')
+# max pooling 2
 network = max_pool_2d(network, 2)
-network = fully_connected(network, 128, activation='relu')
-network = fully_connected(network, 128, activation='relu')
+# convolution 2
+network = conv_2d(network, 16, 3, activation='relu')
+# max pooling 2
+network = max_pool_2d(network, 2)
+# convolution 2
+network = conv_2d(network, 16, 3, activation='relu')
+# convolution 2
+network = conv_2d(network, 16, 3, activation='relu')
+# max pooling 2
+network = max_pool_2d(network, 2)
+# fully-connected
+network = fully_connected(network,256, activation='relu')
+# dropout
 network = dropout(network, 0.5)
+
 network = fully_connected(network, 13, activation='softmax')
 network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0005)
 
-model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/E4D81381D81350E2/checkpoints/msuus-target-classifier.tfl.ckpt')
-model.load('shape_classifier.tfl')
+model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/SSD480/checkpoints/shape_classifier.tfl.ckpt')
+model.load('shape_classifier2.tfl')
 
 predicted_target_label = model.predict([image])
 
