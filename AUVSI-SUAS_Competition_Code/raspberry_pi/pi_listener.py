@@ -62,8 +62,8 @@ def get_gps():
 def take_picture():
 	global cap_count, camera
 	cap_count += 1
-	filename = captures_path+'/image_'+str(cap_count-1)+'.jpg'
-	camera.capture(filename)
+	filename = captures_path+'/image_'+str(cap_count-1)+'.png'
+	camera.capture(filename, format="png")
 
 	with open(filename, "rb") as image_file:
 		encoded_image = base64.b64encode(image_file.read()).decode()

@@ -30,7 +30,7 @@ def main():
 			uas_heading=90)
 		#send that info to the interop server
 		delta = datetime.datetime.now() - last_telem
-		out.set(delta.total_seconds() * 1000)
+		out.set(1 / (delta.total_seconds()))
 		client.post_telemetry(telemetry)
 
 	def upload_all_targets(client, target_json, sys_db, out):		
@@ -168,7 +168,7 @@ def main():
 			out.insert(END, "Error sending take picture signal\n")
 			out.see(END)
 
-	def connect(url, username, password, out):
+	def interop_connect(url, username, password, out):
 		try:
 			#set up the connection to the interop server at the specified
 			#url with the specified username/password
@@ -192,14 +192,12 @@ def main():
 	telemetry_open = False
 	client = interop.Client(url='http://127.0.0.1:8000', username='testuser', password='testpass')
 
-	# need to add drone connection here
-	#drone = UAV.connect(url='http://127.0.0.1:8000', username='testuser', password='testpass')
-
 	datarate = 0 # to store avg datarate
 	last_telem = datetime.datetime.now()
 
 	imagedir = 'target_images'
 	drone = UAV.UAV('http://192.168.1.31:5000','MSUUS','Unmanned2017')
+	
 	#Connect to the mySQL database
 	db = MySQLdb.connect(host = "localhost", user="root", passwd = "password", db ="MSUUS")
 	#Use own credentials for actual database
@@ -212,7 +210,7 @@ def main():
 	window = tkinter.Tk()
 	
 	window.protocol("WM_DELETE_WINDOW", on_closing)
-	window.title("MSUUS System Software v0.5")
+	window.title("MSUUS System Software v0.6")
 	window.geometry("590x560")
 
 	url = StringVar( window )
@@ -260,7 +258,7 @@ def main():
 	picture_box_field = Label( window, image = last_pic )
 	picture_box_field.place(x=370, y=40, width = 180, height = 160)
 
-	connect_button = Button( window, text="Interop Connect", command = lambda: connect(url.get(),username.get(),password.get(),output_textbox) )
+	connect_button = Button( window, text="Interop Connect", command = lambda: interop_connect(url.get(),username.get(),password.get(),output_textbox) )
 	connect_button.place(x=10, y=90)	
 	
 	ping_button = Button( window, text="Ping Drone", command = lambda: ping_drone(drone, output_textbox) )
@@ -269,7 +267,7 @@ def main():
 	take_picture_button = Button( window, text="Take Picture", command = lambda: drone_take_picture(drone, db, output_textbox, picture_box_field) )
 	take_picture_button.place(x=10, y=120)
 	
-	auto_picture_button = Button( window, text="Auto Picture", command = lambda: drone_take_picture(drone, db, output_textbox) )
+	auto_picture_button = Button( window, text="Auto Picture", command = lambda: drone_take_picture(drone, db, output_textbox, picture_box_field) )
 	auto_picture_button.place(x=112, y=120)
 	auto_picture_button.configure(state='disable')
 	

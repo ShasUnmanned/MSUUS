@@ -36,31 +36,35 @@ img_distortion = ImageAugmentation()
 network = input_data(shape=[None, 64, 64, 1], 
 	data_preprocessing=img_preprocessor,
 	data_augmentation=img_distortion)
-
+	
 # convolution 2
 network = conv_2d(network, 16, 5, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
 # convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
+network = conv_2d(network, 24, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
+# dropout
+#network = dropout(network, 0.3)
 # convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
-# convolution 2
-network = conv_2d(network, 16, 3, activation='relu')
+network = conv_2d(network, 32, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
+# dropout
+#network = dropout(network, 0.3)
 # fully-connected
-network = fully_connected(network,256, activation='relu')
+network = fully_connected(network, 512, activation='relu')
+# fully-connected
+network = fully_connected(network, 512, activation='relu')
 # dropout
 network = dropout(network, 0.5)
 
 network = fully_connected(network, 13, activation='softmax')
-network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0005)
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.01)
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/SSD480/checkpoints/shape_classifier.tfl.ckpt')
-model.load('shape_classifier2.tfl')
+model.load('shape_classifier.tfl')
 
 predicted_target_label = model.predict([image])
 

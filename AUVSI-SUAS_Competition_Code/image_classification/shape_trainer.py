@@ -59,7 +59,7 @@ for i in range(0, len(x)):
 	tmp_arr = np.fromstring(temp.tobytes(), np.uint8)
 	temp = tmp_arr.reshape(64,64,1)
 	
-	if not random.randrange(0,5):
+	if not random.randrange(0,2):
 		images_test.append( temp )
 		labels_test.append( label_set[i] )
 	else:
@@ -97,35 +97,29 @@ network = input_data(shape=[None, 64, 64, 1],
 
 
 # convolution 2
-network = conv_2d(network, 16, 5, activation='relu')
+network = conv_2d(network, 32, 5, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
-# dropout
-network = dropout(network, 0.3)
 # convolution 2
-network = conv_2d(network, 24, 3, activation='relu')
+network = conv_2d(network, 48, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
-# dropout
-network = dropout(network, 0.3)
 # convolution 2
-network = conv_2d(network, 32, 3, activation='relu')
+network = conv_2d(network, 64, 3, activation='relu')
 # max pooling 2
 network = max_pool_2d(network, 2)
-# dropout
-network = dropout(network, 0.3)
 # fully-connected
 network = fully_connected(network, 512, activation='relu')
 # fully-connected
 network = fully_connected(network, 512, activation='relu')
 # dropout
-network = dropout(network, 0.5)
+network = dropout(network, 0.75)
 
 # fully-connected final
 network = fully_connected(network, 13, activation='softmax')
 
 
-network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.001)
+network = regression(network, optimizer='adam', loss='categorical_crossentropy', learning_rate=0.0001)
 
 
 model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salvi/SSD480/checkpoints/shape_classifier.tfl.ckpt')
@@ -133,7 +127,7 @@ model = tflearn.DNN(network, tensorboard_verbose=2, checkpoint_path='/media/salv
 # if previously trained model is available use that
 #model.load('shape_classifier.tfl')
 
-model.fit(images, labels, n_epoch=100, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=256, snapshot_epoch=True, run_id='shape_classifier')
+model.fit(images, labels, n_epoch=300, shuffle=True, validation_set=(images_test, labels_test), show_metric=True, batch_size=256, snapshot_epoch=True, run_id='shape_classifier')
 
 model.save("shape_classifier.tfl")
 print("Network trained and saved as shape_classifier.tfl")
